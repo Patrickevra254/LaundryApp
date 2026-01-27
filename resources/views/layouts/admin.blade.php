@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ $title ?? 'Admin Dashboard' }}</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    {{-- coreUi --}}
+    <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/css/coreui.min.css" rel="stylesheet"
+        integrity="sha384-oMIIhJL1T5s+PxJr6+Qb0pO1IRFB6OGMM+J57UBT3UQKxSVsb++MkXpu9cLqaJxu" crossorigin="anonymous">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    {{-- apex.js --}}
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+</head>
+
+<body class="bg-light" id="body">
+
+    <!-- Header / Topbar (full width) -->
+    @include('components.admin.header')
+
+    <div class="d-flex" style="min-height: calc(100vh - 70px);">
+
+        <!-- Sidebar (starts under header) -->
+        @include('components.admin.sidebar2')
+
+        <!-- Main content -->
+        <main id="main-content" class="flex-grow-1 p-4 position-relative">
+
+            <!-- Global Page Loader -->
+            <div class="htmx-indicator text-center py-5" style="z-index: 1050;">
+                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3 fw-semibold mb-0">Loading, please wait...</p>
+            </div>
+
+            @if (session('success'))
+                <div class="alert alert-success" id="success-alert">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            <!-- Content Area -->
+            <div id="content-area">
+                {!! $content ?? '' !!}
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Footer -->
+    @include('components.admin.footer')
+
+    {{-- coreUI --}}
+    <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.4.3/dist/js/coreui.bundle.min.js"
+        integrity="sha384-SWhFOmxmv1pfTLKVBW7q8uossvuaWNeQFdmaWi6xdldiUjyqG9F6V2R2BOC8gkxx" crossorigin="anonymous">
+    </script>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Optional: Custom JS -->
+    <script src="{{ asset('assets/js/custom.js') }}"></script>
+
+    {{-- HTMX integration --}}
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    {{-- Main Scripts --}}
+    {{-- <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const sidebar = document.querySelector('.sidebar');
+            const contentArea = document.getElementById('content-area');
+            const loader = document.querySelector('.htmx-indicator');
+
+
+            // --- Ensure sidebar is visible on tablet (768–991px)
+            if (window.innerWidth >= 768 && window.innerWidth < 992) {
+                sidebar.classList.add('show');
+            }
+
+            // Sidebar toggle
+            toggleBtn?.addEventListener('click', () => {
+                if (window.innerWidth >= 767) {
+                    sidebar.classList.toggle('collapsed');
+                } else {
+                    sidebar.classList.toggle('show');
+                }
+            });
+
+            // Clear content and show spinner BEFORE request starts
+            document.body.addEventListener('htmx:beforeRequest', function(event) {
+                if (event.detail.target.id === 'content-area') {
+                    console.log('Request starting - clearing content');
+
+                    // Clear old content immediately
+                    contentArea.innerHTML = '';
+
+                    // Show spinner
+                    if (loader) {
+                        loader.style.display = 'block';
+                    }
+                }
+            });
+
+            // Hide spinner after content loads
+            document.body.addEventListener('htmx:afterSwap', function(event) {
+                if (event.detail.target.id === 'content-area') {
+                    console.log('Content loaded - hiding spinner');
+                    if (loader) {
+                        loader.style.display = 'none';
+                    }
+                }
+            });
+
+            // Hide spinner on error
+            document.body.addEventListener('htmx:responseError', function(event) {
+                if (event.detail.target.id === 'content-area') {
+                    console.log('Error occurred');
+                    if (loader) {
+                        loader.style.display = 'none';
+                    }
+                    contentArea.innerHTML =
+                        '<div class="alert alert-danger">Failed to load content. Please try again.</div>';
+                }
+            });
+        });
+
+        // to redirect to login page after expired session
+        document.body.addEventListener('htmx:beforeSwap', function(event) {
+            // Check if response is a redirect to login
+            if (event.detail.xhr.responseURL && event.detail.xhr.responseURL.includes('/login')) {
+                event.detail.shouldSwap = false; // Cancel the swap
+                window.location.href = '/login'; // Do full page redirect
+            }
+        });
+    </script> --}}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const sidebar = document.querySelector('.sidebar');
+            const contentArea = document.getElementById('content-area');
+            const loader = document.querySelector('.htmx-indicator');
+
+            // --- Ensure sidebar is visible on tablet (768–991px)
+            if (window.innerWidth >= 768 && window.innerWidth < 992) {
+                sidebar.classList.add('show');
+            }
+
+            // Sidebar toggle
+            toggleBtn?.addEventListener('click', () => {
+                if (window.innerWidth >= 767) {
+                    sidebar.classList.toggle('collapsed');
+                } else {
+                    sidebar.classList.toggle('show');
+                }
+            });
+
+            // ===== AUTHENTICATION REDIRECT HANDLERS =====
+
+            // Detect login page in response URL before swap
+            document.body.addEventListener('htmx:beforeSwap', function(event) {
+                const responseURL = event.detail.xhr.responseURL;
+
+                if (responseURL && responseURL.includes('/login')) {
+                    console.log('Login page detected in URL, doing full redirect');
+                    event.detail.shouldSwap = false;
+                    event.preventDefault();
+                    window.location.href = '/login';
+                    return false;
+                }
+            });
+
+            // Handle 401 Unauthorized responses
+            document.body.addEventListener('htmx:responseError', function(event) {
+                const xhr = event.detail.xhr;
+
+                if (xhr.status === 401) {
+                    console.log('401 Unauthorized - redirecting to login');
+                    const redirectUrl = xhr.getResponseHeader('HX-Redirect');
+                    window.location.href = redirectUrl || '/';
+                    return false;
+                }
+
+                // Show error for other errors
+                if (event.detail.target.id === 'content-area') {
+                    console.log('Error occurred');
+                    if (loader) {
+                        loader.style.display = 'none';
+                    }
+                    contentArea.innerHTML =
+                        '<div class="alert alert-danger">Failed to load content. Please try again.</div>';
+                }
+            });
+
+            // Catch login page content after swap (last resort)
+            document.body.addEventListener('htmx:afterSwap', function(event) {
+                if (event.detail.target.id === 'content-area') {
+                    const content = event.detail.target.innerHTML.toLowerCase();
+
+                    // Check if login form was loaded
+                    if (content.includes('login') &&
+                        (content.includes('password') || content.includes('email'))) {
+                        console.log('Login form detected in content, doing full redirect');
+                        window.location.href = '/';
+                        return false;
+                    }
+
+                    console.log('Content loaded - hiding spinner');
+                    if (loader) {
+                        loader.style.display = 'none';
+                    }
+                }
+            });
+
+            // ===== LOADING INDICATOR HANDLERS =====
+
+            // Clear content and show spinner BEFORE request starts
+            document.body.addEventListener('htmx:beforeRequest', function(event) {
+                if (event.detail.target.id === 'content-area') {
+                    console.log('Request starting - clearing content');
+                    contentArea.innerHTML = '';
+                    if (loader) {
+                        loader.style.display = 'block';
+                    }
+                }
+            });
+        });
+    </script>
+
+    {{-- Charts for report --}}
+    <script>
+        function loadReportCharts() {
+            const salesChartElement = document.querySelector("#reportSalesChart");
+            const userChartElement = document.querySelector("#reportUserChart");
+
+            if (!salesChartElement || !userChartElement) {
+                console.log('Chart elements not found - not on reports page');
+                return;
+            }
+
+            console.log('Initializing charts...');
+
+            // Clear any existing charts
+            salesChartElement.innerHTML = '';
+            userChartElement.innerHTML = '';
+
+            // Sales Chart
+            var salesChart = new ApexCharts(salesChartElement, {
+                chart: {
+                    type: "area",
+                    height: 250
+                },
+                series: [{
+                    name: "Sales",
+                    data: [44, 55, 57, 56, 61]
+                }],
+                xaxis: {
+                    categories: ["Jan", "Feb", "Mar", "Apr", "May"]
+                }
+            });
+            salesChart.render();
+
+            // Users Chart
+            var userChart = new ApexCharts(userChartElement, {
+                chart: {
+                    type: "line",
+                    height: 250
+                },
+                series: [{
+                    name: "Registrations",
+                    data: [10, 25, 15, 40, 22]
+                }],
+                xaxis: {
+                    categories: ["Mon", "Tue", "Wed", "Thu", "Fri"]
+                }
+            });
+            userChart.render();
+
+            console.log('Charts loaded successfully!');
+        }
+
+        // Initialize charts on initial page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded - checking for charts...');
+            loadReportCharts();
+        });
+
+        // Initialize charts after HTMX swap
+        document.body.addEventListener("htmx:afterSwap", function(event) {
+            if (event.detail.target.id === "content-area") {
+                setTimeout(() => {
+                    loadReportCharts();
+                }, 100);
+            }
+        });
+    </script>
+
+    {{-- message timeout --}}
+    <script>
+        // Auto-hide alert after 7 seconds
+        setTimeout(function() {
+            const alert = document.getElementById('success-alert');
+            if (alert) {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
+            }
+        }, 5000);
+    </script>
+
+</body>
+
+</html>
+
+<style>
+    .htmx-indicator {
+        display: none;
+        position: fixed !important;
+        top: 50% !important;
+        left: 55% !important;
+        transform: translate(-50%, -50%) !important;
+    }
+</style>

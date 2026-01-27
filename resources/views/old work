@@ -1,0 +1,454 @@
+       <!-- REGISTER FORM -->
+                                <div id="registerForm" class="d-none">
+                                    <h4 class="fw-bold mb-1">Create Account</h4>
+                                    <p class="text-muted mb-4">Create your new account</p>
+
+                                    <form method="POST" action="{{ route('register.store') }}">
+                                        @csrf
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Full Name</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text border-end-0">
+                                                    <i class="fas fa-user text-muted"></i>
+                                                </span>
+                                                <input type="text" name="name"
+                                                    class="form-control border-start-0 ps-0" placeholder="John Doe"
+                                                    required>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Email Address</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text border-end-0">
+                                                    <i class="fas fa-envelope text-muted"></i>
+                                                </span>
+                                                <input type="email" name="email"
+                                                    class="form-control border-start-0 ps-0"
+                                                    placeholder="name@company.com" required>
+                                            </div>
+                                        </div>
+
+                                        <!-- PHONE NUMBER -->
+                                        <div class="mb-3">
+                                            <label class="form-label">Phone Number</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text border-end-0">
+                                                    <i class="fas fa-phone text-muted"></i>
+                                                </span>
+                                                <input type="tel" name="phone"
+                                                    class="form-control border-start-0 ps-0"
+                                                    placeholder="+1 234 567 8900" required>
+                                            </div>
+                                        </div>
+
+                                        <!-- ADDRESS FIELD -->
+                                        <div class="mb-3">
+                                            <label class="form-label">Address</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text border-end-0">
+                                                    <i class="fas fa-location-dot text-muted"></i>
+                                                </span>
+                                                <input type="text" name="address"
+                                                    class="form-control border-start-0 ps-0"
+                                                    placeholder="123 Main Street, City, Country" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Password</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text border-end-0">
+                                                    <i class="fas fa-lock text-muted"></i>
+                                                </span>
+                                                <input type="password" name="password" id="registerPassword"
+                                                    class="form-control border-start-0 border-end-0 ps-0" required>
+                                                <span class="input-group-text border-start-0"
+                                                    onclick="togglePassword('registerPassword', this)">
+                                                    <i class="fas fa-eye text-muted"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Confirm Password</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text border-end-0">
+                                                    <i class="fas fa-lock text-muted"></i>
+                                                </span>
+                                                <input type="password" name="password_confirmation"
+                                                    id="confirmPassword"
+                                                    class="form-control border-start-0 border-end-0 ps-0" required>
+                                                <span class="input-group-text border-start-0"
+                                                    onclick="togglePassword('confirmPassword', this)">
+                                                    <i class="fas fa-eye text-muted"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-check mb-3">
+                                            <input type="checkbox" class="form-check-input" required>
+                                            <label class="form-check-label small">
+                                                I agree to the Terms & Privacy Policy
+                                            </label>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            Create Account
+                                        </button>
+
+                                        <p class="text-center mt-4 small text-muted">
+                                            Already have an account?
+                                            <a href="#" onclick="switchForm('login')" class="fw-semibold">
+                                                Sign In
+                                            </a>
+                                        </p>
+                                    </form>
+                                </div>
+
+
+
+
+
+
+<!-- laundry booking -->
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="mb-4">
+        <h4 class="fw-bold mb-1">Book Laundry</h4>
+        <small class="text-muted">Create a new laundry order</small>
+    </div>
+
+    <form>
+
+        <div class="row g-4">
+
+            <!-- LEFT COLUMN -->
+            <div class="col-12 col-lg-8">
+
+                <!-- Customer Information -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white fw-semibold">
+                        <i class="fa fa-user me-2 text-primary"></i> Customer Information
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+
+                            @if (auth()->user()->role == 'customer')
+                                <!-- Logged-in customer -->
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Customer</label>
+                                    <input type="text" class="form-control" value="{{ auth()->user()->name }}"
+                                        disabled>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="text" class="form-control" value="{{ auth()->user()->phone }}"
+                                        disabled>
+                                </div>
+                            @else
+                                <!-- Staff/Admin creating a booking -->
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Select Customer</label>
+                                    <select name="customer_id" id="customerSelect" class="form-select" required>
+                                        <option value="">-- Select Customer --</option>
+                                        @foreach ($customers as $customer)
+                                            <option value="{{ $customer->id }}" data-phone="{{ $customer->phone }}">
+                                                {{ $customer->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" id="customerPhone" class="form-control"
+                                        value=" {{ $customer->phone }}">
+                                </div>
+
+                            @endif
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Pickup & Delivery -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white fw-semibold">
+                        <i class="fa fa-map-marker-alt me-2 text-primary"></i> Pickup & Delivery
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Pickup Address</label>
+                                <textarea class="form-control" rows="2" placeholder="Enter pickup address"></textarea>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Delivery Address</label>
+                                <textarea class="form-control" rows="2" placeholder="Enter delivery address"></textarea>
+                            </div>
+
+                            <div class="col-12 col-md-4">
+                                <label class="form-label">Pickup Date</label>
+                                <input type="date" class="form-control">
+                            </div>
+
+                            <div class="col-12 col-md-4">
+                                <label class="form-label">Delivery Date</label>
+                                <input type="date" class="form-control">
+                            </div>
+
+                            <div class="col-12 col-md-4">
+                                <label class="form-label">Service Type</label>
+                                <select class="form-select">
+                                    <option>Standard</option>
+                                    <option>Express</option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Laundry Items -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white fw-semibold d-flex justify-content-between align-items-center">
+                        <span>
+                            <i class="fa fa-tshirt me-2 text-primary"></i> Laundry Items
+                        </span>
+
+                        <button type="button" class="btn btn-sm btn-outline-primary">
+                            <i class="fa fa-plus"></i> Add Item
+                        </button>
+                    </div>
+
+                    <div class="card-body p-0">
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered align-middle mb-0 mobile-friendly">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Price</th>
+                                        <th>Qty</th>
+                                        <th>Subtotal</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    <tr>
+                                        <td data-label="Item">
+                                            <select class="form-select">
+                                                <option>Singlet</option>
+                                                <option>Boxer</option>
+                                                <option>Jeans</option>
+                                                <option>Polo T-Shirt</option>
+                                                <option>Gown</option>
+                                                <option>Skirt</option>
+                                                <option>Thick Bedsheet</option>
+                                                <option>Light Bedsheet</option>
+                                                <option>Jacket</option>
+                                                <option>Towel</option>
+                                            </select>
+                                        </td>
+
+                                        <td data-label="Price">
+                                            <input type="text" class="form-control" value="₦500" disabled>
+                                        </td>
+
+                                        <td data-label="Qty">
+                                            <input type="number" class="form-control" value="1" min="1">
+                                        </td>
+
+                                        <td data-label="Subtotal" class="fw-semibold">₦500</td>
+
+                                        <td data-label="Action" class="text-center">
+                                            <button type="button" class="btn btn-sm btn-outline-danger">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="col-12 col-lg-4">
+
+                <!-- Order Summary -->
+                <div class="card shadow-sm position-sticky" style="top: 80px;">
+                    <div class="card-header bg-white fw-semibold">
+                        <i class="fa fa-receipt me-2 text-primary"></i> Order Summary
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Total Items</span>
+                            <span>1</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal</span>
+                            <span>₦500</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Service Fee</span>
+                            <span>₦200</span>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between fw-bold fs-5">
+                            <span>Total</span>
+                            <span>₦700</span>
+                        </div>
+
+                        <button type="button" class="btn btn-primary w-100 mt-4">
+                            <i class="fa fa-check-circle me-1"></i> Create Order
+                        </button>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+<style>
+    /* Mobile-Friendly Table */
+    @media (max-width: 768px) {
+        .mobile-friendly thead {
+            display: none;
+        }
+
+        .mobile-friendly tr {
+            display: block;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #f1f1f1;
+        }
+
+        .mobile-friendly td {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+        .mobile-friendly td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #6c757d;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const tableBody = document.querySelector(".table tbody");
+        const addBtn = document.querySelector(".card-header .btn-outline-primary");
+        const totalItemsEl = document.querySelector(
+            ".position-sticky .card-body div:nth-child(1) span:last-child");
+        const subtotalEl = document.querySelector(
+            ".position-sticky .card-body div:nth-child(2) span:last-child");
+        const totalEl = document.querySelector(".position-sticky .card-body .fw-bold span");
+
+        function updateTotals() {
+            let totalItems = 0;
+            let subtotal = 0;
+
+            tableBody.querySelectorAll("tr").forEach(row => {
+                const qtyInput = row.querySelector('input[type="number"]');
+                const priceInput = row.querySelector('input[disabled]');
+                const subtotalCell = row.querySelector('td.fw-semibold');
+
+                const qty = parseInt(qtyInput.value) || 0;
+                const price = parseInt(priceInput.value.replace(/[^\d]/g, '')) || 0;
+
+                const rowSubtotal = qty * price;
+                subtotalCell.textContent = '₦' + rowSubtotal.toLocaleString();
+
+                totalItems += qty;
+                subtotal += rowSubtotal;
+            });
+
+            const serviceFee = 200;
+            const total = subtotal + serviceFee;
+
+            totalItemsEl.textContent = totalItems;
+            subtotalEl.textContent = '₦' + subtotal.toLocaleString();
+            totalEl.textContent = '₦' + total.toLocaleString();
+        }
+
+        // Initial update
+        updateTotals();
+
+        // Quantity change
+        tableBody.addEventListener('input', function(e) {
+            if (e.target.type === 'number') updateTotals();
+        });
+
+        // Delete row
+        tableBody.addEventListener('click', function(e) {
+            if (e.target.closest(".btn-outline-danger")) {
+                e.target.closest("tr").remove();
+                updateTotals();
+            }
+        });
+
+        // Add new item
+        addBtn.addEventListener("click", function() {
+            const newRow = document.createElement("tr");
+            newRow.innerHTML = `
+            <td data-label="Item">
+                <select class="form-select">
+                    <option>Singlet</option>
+                    <option>Boxer</option>
+                    <option>Jeans</option>
+                    <option>Polo T-Shirt</option>
+                    <option>Gown</option>
+                    <option>Skirt</option>
+                    <option>Thick Bedsheet</option>
+                    <option>Light Bedsheet</option>
+                    <option>Jacket</option>
+                    <option>Towel</option>
+                </select>
+            </td>
+            <td data-label="Price">
+                <input type="text" class="form-control" value="₦500" disabled>
+            </td>
+            <td data-label="Qty">
+                <input type="number" class="form-control" value="1" min="1">
+            </td>
+            <td data-label="Subtotal" class="fw-semibold">₦500</td>
+            <td data-label="Action" class="text-center">
+                <button type="button" class="btn btn-sm btn-outline-danger">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </td>
+        `;
+            tableBody.appendChild(newRow);
+            updateTotals();
+        });
+
+    });
+</script>

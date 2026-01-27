@@ -1,0 +1,36 @@
+<?php
+
+namespace App\Notifications;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
+
+class NewUserRegistered extends Notification
+{
+    use Queueable;
+
+    public function __construct(public $user)
+    {
+        //
+    }
+
+    /**
+     * Delivery channels
+     */
+    public function via($notifiable): array
+    {
+        return ['database'];
+    }
+
+    /**
+     * Store in database
+     */
+    public function toDatabase($notifiable): array
+    {
+        return [
+            'title'   => 'New User Registered',
+            'message' => "{$this->user->name} just created an account.",
+            'user_id' => $this->user->id,
+        ];
+    }
+}

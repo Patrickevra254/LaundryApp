@@ -1,0 +1,699 @@
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="mb-4">
+        <h4 class="fw-bold mb-1">Book Laundry</h4>
+        <small class="text-muted">Create a new laundry order</small>
+    </div>
+
+    <form method="POST" action="{{ route('laundry-orders.store') }}">
+        @csrf
+
+        <div class="row g-4">
+
+            <!-- LEFT COLUMN -->
+            <div class="col-12 col-lg-8">
+
+                <!-- ================= CUSTOMER INFORMATION ================= -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white fw-semibold">
+                        <i class="fa fa-user me-2 text-primary"></i> Customer Information
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            @if (auth()->user()->role == 'customer')
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Customer</label>
+                                    <input type="text" class="form-control" value="{{ auth()->user()->name }}"
+                                        disabled>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="text" class="form-control" value="{{ auth()->user()->phone }}"
+                                        disabled>
+                                </div>
+                                <input type="hidden" name="customer_id" value="{{ auth()->user()->id }}">
+                            @else
+                                <input type="text" name="q" class="form-control mb-2"
+                                    placeholder="Search by name or phone" hx-get="{{ route('customers.search') }}"
+                                    hx-trigger="keyup changed delay:300ms" hx-target="#customerSelect"
+                                    hx-swap="innerHTML" hx-on="htmx:afterSwap: openCustomerSelect()">
+
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Select Customer</label>
+                                    <select name="customer_id" id="customerSelect" class="form-select" required>
+                                        <option value="">-- Select Customer --</option>
+                                        @foreach ($customers as $customer)
+                                            <option value="{{ $customer->id }}" data-phone="{{ $customer->phone }}">
+                                                {{ $customer->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" id="customerPhone" class="form-control" readonly>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= PICKUP & DELIVERY ================= -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white fw-semibold">
+                        <i class="fa fa-map-marker-alt me-2 text-primary"></i> Pickup & Delivery
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Pickup Address</label>
+                                <textarea name="pickup_address" class="form-control" rows="2" required></textarea>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Delivery Address</label>
+                                <textarea name="delivery_address" class="form-control" rows="2" required></textarea>
+                            </div>
+
+                            <div class="col-12 col-md-4">
+                                <label class="form-label">Pickup Date</label>
+                                <input type="date" name="pickup_date" class="form-control" required>
+                            </div>
+
+                            <div class="col-12 col-md-4">
+                                <label class="form-label">Delivery Date</label>
+                                <input type="date" name="delivery_date" class="form-control" required>
+                            </div>
+
+                            {{-- <div class="col-12 col-md-4">
+                                <label class="form-label">Service Type</label>
+                                <select id="globalServiceType" name="service_type" class="form-select">
+                                    <option value="washing">Washing</option>
+                                    <option value="ironing">Ironing</option>
+                                    <option value="wash_and_iron">Washing & Ironing</option>
+                                </select>
+                            </div> --}}
+
+
+                            {{-- <div class="col-12 col-md-4">
+                                <label class="form-label">Service Type</label>
+                                <td data-label="Service Type">
+                                    <select name="items[0][service_type]" class="form-select item-service">
+                                        <option value="washing">Washing</option>
+                                        <option value="ironing">Ironing</option>
+                                        <option value="wash_and_iron">Washing & Ironing</option>
+                                    </select>
+                                </td>
+
+                            </div> --}}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= LAUNDRY ITEMS ================= -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white fw-semibold d-flex justify-content-between align-items-center">
+                        <span>
+                            <i class="fa fa-tshirt me-2 text-primary"></i> Laundry Items
+                        </span>
+                        <button type="button" id="addItemBtn" class="btn btn-sm btn-outline-primary">
+                            <i class="fa fa-plus"></i> Add Item
+                        </button>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-bordered align-middle mb-0 mobile-friendly">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Service Type</th>
+                                        <th>Price</th>
+                                        <th>Qty</th>
+                                        <th>Subtotal</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="itemsTableBody">
+                                    @php $firstItem = $items->first(); @endphp
+                                    <tr>
+                                        <!-- ITEM -->
+                                        <td data-label="Item">
+                                            <select name="items[0][item_id]" class="form-select item-name">
+                                                @foreach ($items as $item)
+                                                    <option value="{{ $item->id }}"
+                                                        data-washing="{{ $item->washing_price }}"
+                                                        data-ironing="{{ $item->ironing_price }}"
+                                                        data-wash_and_iron="{{ $item->wash_and_iron_price }}">
+                                                        {{ $item->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+
+                                        <!-- SERVICE TYPE -->
+                                        <td data-label="Service">
+                                            <select name="items[0][service_type]" class="form-select item-service">
+                                                <option value="washing" selected>Washing</option>
+                                                <option value="ironing">Ironing</option>
+                                                <option value="wash_and_iron">Washing & Ironing</option>
+                                            </select>
+                                        </td>
+
+                                        <!-- PRICE -->
+                                        <td data-label="Price">
+                                            <input type="hidden" name="items[0][price]" class="item-price"
+                                                value="{{ $firstItem->washing_price }}">
+                                            <input type="text" class="form-control price-display"
+                                                value="₦{{ number_format($firstItem->washing_price) }}" disabled>
+                                        </td>
+
+                                        <!-- QTY -->
+                                        <td data-label="Qty">
+                                            <input type="number" name="items[0][quantity]"
+                                                class="form-control item-qty" value="1" min="1">
+                                        </td>
+
+                                        <!-- SUBTOTAL -->
+                                        <td data-label="Subtotal" class="fw-semibold item-subtotal">
+                                            ₦{{ number_format($firstItem->washing_price) }}</td>
+
+                                        <!-- REMOVE -->
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove-item">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="col-12 col-lg-4">
+                <div class="card shadow-sm position-sticky" style="top: 80px;">
+                    <div class="card-header bg-white fw-semibold">
+                        <i class="fa fa-receipt me-2 text-primary"></i> Order Summary
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Total Items</span>
+                            <span id="totalItems">1</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal</span>
+                            <span id="subtotal">₦500</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Service Fee</span>
+                            <span>₦200</span>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between fw-bold fs-5">
+                            <span>Total</span>
+                            <span id="total">₦700</span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mt-4">
+                            <i class="fa fa-check-circle me-1"></i> Create Order
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+<style>
+    /* Mobile-Friendly Table */
+    @media (max-width: 768px) {
+        .mobile-friendly thead {
+            display: none;
+        }
+
+        .mobile-friendly tr {
+            display: block;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #f1f1f1;
+        }
+
+        .mobile-friendly td {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+        .mobile-friendly td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #6c757d;
+        }
+    }
+</style>
+
+{{-- <script>
+    const ITEMS = @json($items); // DB-driven items
+
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const globalServiceType = document.getElementById('globalServiceType');
+        const tableBody = document.getElementById('itemsTableBody');
+        const addBtn = document.getElementById('addItemBtn');
+
+        let itemIndex = tableBody.querySelectorAll('tr').length; // track rows
+
+        // ---- Update a single row price based on item & current service ----
+        function updateRowPrice(row) {
+            const itemSelect = row.querySelector('.item-name');
+            const priceInput = row.querySelector('.item-price');
+            const priceDisplay = row.querySelector('.price-display');
+            const subtotalCell = row.querySelector('.item-subtotal');
+            const qty = parseInt(row.querySelector('.item-qty').value) || 0;
+
+            const selectedItem = itemSelect.selectedOptions[0];
+            const service = globalServiceType.value; // current global service
+            const price = parseInt(selectedItem.dataset[service]) || 0;
+
+            priceInput.value = price;
+            priceDisplay.value = '₦' + price.toLocaleString();
+            subtotalCell.textContent = '₦' + (price * qty).toLocaleString();
+
+            updateTotals();
+        }
+
+        // ---- Update totals ----
+        function updateTotals() {
+            let totalItems = 0;
+            let subtotal = 0;
+
+            tableBody.querySelectorAll('tr').forEach(row => {
+                const qty = parseInt(row.querySelector('.item-qty').value) || 0;
+                const price = parseInt(row.querySelector('.item-price').value) || 0;
+                totalItems += qty;
+                subtotal += qty * price;
+            });
+
+            const serviceFee = 200;
+            const total = subtotal + serviceFee;
+
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('subtotal').textContent = '₦' + subtotal.toLocaleString();
+            document.getElementById('total').textContent = '₦' + total.toLocaleString();
+        }
+
+        // ---- Update all rows when global service changes ----
+        globalServiceType.addEventListener('change', function() {
+            tableBody.querySelectorAll('tr').forEach(row => updateRowPrice(row));
+        });
+
+        // ---- Update row price when item changes ----
+        tableBody.addEventListener('change', function(e) {
+            if (e.target.classList.contains('item-name')) {
+                const row = e.target.closest('tr');
+                updateRowPrice(row);
+            }
+        });
+
+        // ---- Update row price when quantity changes ----
+        tableBody.addEventListener('input', function(e) {
+            if (e.target.classList.contains('item-qty')) {
+                const row = e.target.closest('tr');
+                updateRowPrice(row);
+            }
+        });
+
+        // ---- Remove item ----
+        tableBody.addEventListener('click', function(e) {
+            if (e.target.closest('.remove-item')) {
+                e.target.closest('tr').remove();
+                updateTotals();
+            }
+        });
+
+        // ---- Add new item row ----
+        addBtn.addEventListener('click', function() {
+
+            const firstItem = ITEMS[0]; // default item
+            const options = ITEMS.map(item => `
+                <option value="${item.id}"
+                        data-washing="${item.washing_price}"
+                        data-ironing="${item.ironing_price}"
+                        data-wash_and_iron="${item.wash_and_iron_price}">
+                    ${item.name}
+                </option>
+            `).join('');
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td data-label="Item">
+                    <select name="items[${itemIndex}][item_id]" class="form-select item-name">
+                        ${options}
+                    </select>
+                </td>
+
+                <td data-label="Price">
+                    <input type="hidden" name="items[${itemIndex}][price]"
+                           class="item-price"
+                           value="${firstItem[globalServiceType.value + '_price']}">
+                    <input type="text" class="form-control price-display"
+                           value="₦${firstItem[globalServiceType.value + '_price'].toLocaleString()}"
+                           disabled>
+                </td>
+
+                <td data-label="Qty">
+                    <input type="number" name="items[${itemIndex}][quantity]" class="form-control item-qty" value="1" min="1">
+                </td>
+
+                <td data-label="Subtotal" class="fw-semibold item-subtotal">
+                    ₦${firstItem[globalServiceType.value + '_price'].toLocaleString()}
+                </td>
+
+                <td class="text-center">
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-item">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </td>
+            `;
+
+            tableBody.appendChild(row);
+            itemIndex++;
+            updateTotals();
+        });
+
+        updateTotals(); // initial totals
+    });
+</script> --}}
+
+<script>
+    const ITEMS = @json($items);
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const tableBody = document.getElementById('itemsTableBody');
+        const addBtn = document.getElementById('addItemBtn');
+        let itemIndex = tableBody.querySelectorAll('tr').length;
+
+        // ---------------- UPDATE ROW PRICE ----------------
+        function updateRowPrice(row) {
+            const itemSelect = row.querySelector('.item-name');
+            const serviceSelect = row.querySelector('.item-service');
+            const priceInput = row.querySelector('.item-price');
+            const priceDisplay = row.querySelector('.price-display');
+            const qtyInput = row.querySelector('.item-qty');
+            const subtotalCell = row.querySelector('.item-subtotal');
+
+            if (!itemSelect || !serviceSelect) return;
+
+            const selectedItem = itemSelect.selectedOptions[0];
+            const service = serviceSelect.value;
+            const qty = parseInt(qtyInput.value) || 0;
+
+            // Price based on selected service
+            const price = parseInt(selectedItem.dataset[service]) || 0;
+
+            priceInput.value = price; // hidden input
+            priceDisplay.value = '₦' + price.toLocaleString();
+            subtotalCell.textContent = '₦' + (price * qty).toLocaleString();
+
+            updateTotals();
+        }
+
+        // ---------------- UPDATE TOTALS ----------------
+        function updateTotals() {
+            let totalItems = 0;
+            let subtotal = 0;
+
+            tableBody.querySelectorAll('tr').forEach(row => {
+                const qty = parseInt(row.querySelector('.item-qty')?.value) || 0;
+                const price = parseInt(row.querySelector('.item-price')?.value) || 0;
+
+                totalItems += qty;
+                subtotal += qty * price;
+            });
+
+            const serviceFee = 200;
+            const total = subtotal + serviceFee;
+
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('subtotal').textContent = '₦' + subtotal.toLocaleString();
+            document.getElementById('total').textContent = '₦' + total.toLocaleString();
+        }
+
+        // ---------------- EVENT LISTENERS ----------------
+        tableBody.addEventListener('change', function(e) {
+            if (e.target.classList.contains('item-name') || e.target.classList.contains(
+                    'item-service')) {
+                updateRowPrice(e.target.closest('tr'));
+            }
+        });
+
+        tableBody.addEventListener('input', function(e) {
+            if (e.target.classList.contains('item-qty')) {
+                updateRowPrice(e.target.closest('tr'));
+            }
+        });
+
+        tableBody.addEventListener('click', function(e) {
+            if (e.target.closest('.remove-item')) {
+                e.target.closest('tr').remove();
+                updateTotals();
+            }
+        });
+
+        // ---------------- ADD ITEM ----------------
+        addBtn.addEventListener('click', function() {
+            const options = ITEMS.map(item => `
+            <option value="${item.id}"
+                data-washing="${item.washing_price}"
+                data-ironing="${item.ironing_price}"
+                data-wash_and_iron="${item.wash_and_iron_price}">
+                ${item.name}
+            </option>
+        `).join('');
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+            <td data-label="Item">
+                <select name="items[${itemIndex}][item_id]" class="form-select item-name">
+                    ${options}
+                </select>
+            </td>
+
+            <td data-label="Service">
+                <select name="items[${itemIndex}][service_type]" class="form-select item-service">
+                    <option value="washing" selected>Washing</option>
+                    <option value="ironing">Ironing</option>
+                    <option value="wash_and_iron">Washing & Ironing</option>
+                </select>
+            </td>
+
+            <td data-label="Price">
+                <input type="hidden" name="items[${itemIndex}][price]" class="item-price">
+                <input type="text" class="form-control price-display" disabled>
+            </td>
+
+            <td data-label="Qty">
+                <input type="number" name="items[${itemIndex}][quantity]" class="form-control item-qty" value="1" min="1">
+            </td>
+
+            <td data-label="Subtotal" class="fw-semibold item-subtotal">₦0</td>
+
+            <td class="text-center">
+                <button type="button" class="btn btn-sm btn-outline-danger remove-item">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </td>
+        `;
+
+            tableBody.appendChild(row);
+            itemIndex++;
+
+            updateRowPrice(row); // calculate price for new row
+        });
+
+        // ---------------- INITIAL CALC ----------------
+        tableBody.querySelectorAll('tr').forEach(row => updateRowPrice(row));
+    });
+</script>
+
+
+
+<script>
+    function openCustomerSelect() {
+        const select = document.getElementById('customerSelect');
+        if (!select) return;
+
+        setTimeout(() => {
+            const optionCount = select.options.length;
+            select.size = Math.min(optionCount, 5);
+            select.focus();
+
+            if (optionCount === 2) {
+                select.selectedIndex = 1;
+                select.dispatchEvent(new Event('change'));
+                select.size = 1;
+            }
+        }, 0);
+    }
+
+    document.addEventListener('change', function(e) {
+        if (e.target.id === 'customerSelect') {
+            const selectedOption = e.target.options[e.target.selectedIndex];
+            const phoneInput = document.getElementById('customerPhone');
+            phoneInput.value = selectedOption?.dataset?.phone || '';
+        }
+    });
+</script>
+
+{{-- <script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const tableBody = document.querySelector("#itemsTableBody");
+        const addBtn = document.getElementById("addItemBtn");
+        const totalItemsEl = document.getElementById("totalItems");
+        const subtotalEl = document.getElementById("subtotal");
+        const totalEl = document.getElementById("total");
+
+        let itemIndex = tableBody.querySelectorAll("tr").length;
+
+        const priceList = {
+            'Singlet': 500,
+            'Boxer': 500,
+            'Jeans': 800,
+            'Polo T-Shirt': 600,
+            'Gown': 1200,
+            'Skirt': 500,
+            'Thick Bedsheet': 1500,
+            'Light Bedsheet': 1000,
+            'Jacket': 2000,
+            'Towel': 300
+        };
+
+        function updateTotals() {
+            let totalItems = 0;
+            let subtotal = 0;
+
+            tableBody.querySelectorAll("tr").forEach(row => {
+                const qtyInput = row.querySelector('input[name$="[quantity]"]');
+                const priceInput = row.querySelector('input[name$="[price]"]');
+                const subtotalCell = row.querySelector('td.fw-semibold');
+
+                const qty = parseInt(qtyInput.value) || 0;
+                const price = parseInt(priceInput.value) || 0;
+                const rowSubtotal = qty * price;
+
+                subtotalCell.textContent = '₦' + rowSubtotal.toLocaleString();
+
+                totalItems += qty;
+                subtotal += rowSubtotal;
+            });
+
+            const serviceFee = 200;
+            const total = subtotal + serviceFee;
+
+            totalItemsEl.textContent = totalItems;
+            subtotalEl.textContent = '₦' + subtotal.toLocaleString();
+            totalEl.textContent = '₦' + total.toLocaleString();
+        }
+
+        // Update price when item changes
+        tableBody.addEventListener('change', function(e) {
+            if (e.target.tagName === 'SELECT') {
+                const row = e.target.closest('tr');
+                const selectedItem = e.target.value;
+                const price = priceList[selectedItem] || 0;
+
+                const hiddenPriceInput = row.querySelector('input[name$="[price]"]');
+                hiddenPriceInput.value = price;
+
+                row.querySelector('input[disabled]').value = '₦' + price.toLocaleString();
+                updateTotals();
+            }
+        });
+
+        // Update totals on quantity change
+        tableBody.addEventListener('input', function(e) {
+            if (e.target.type === 'number') updateTotals();
+        });
+
+        // Remove item
+        tableBody.addEventListener('click', function(e) {
+            if (e.target.closest(".btn-outline-danger")) {
+                e.target.closest("tr").remove();
+                updateTotals();
+            }
+        });
+
+        // Add new item
+        addBtn.addEventListener("click", function() {
+            const newRow = document.createElement("tr");
+            newRow.innerHTML = `
+            <td data-label="Item">
+                <select name="items[${itemIndex}][name]" class="form-select">
+                    ${Object.keys(priceList).map(item => `<option value="${item}">${item}</option>`).join('')}
+                </select>
+            </td>
+            <td data-label="Price">
+                <input type="hidden" name="items[${itemIndex}][price]" value="${priceList['Singlet']}">
+                <input type="text" class="form-control" value="₦${priceList['Singlet']}" disabled>
+            </td>
+            <td data-label="Qty">
+                <input type="number" name="items[${itemIndex}][quantity]" class="form-control" value="1" min="1">
+            </td>
+            <td data-label="Subtotal" class="fw-semibold">₦${priceList['Singlet']}</td>
+            <td class="text-center">
+                <button type="button" class="btn btn-sm btn-outline-danger">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </td>
+        `;
+            tableBody.appendChild(newRow);
+            itemIndex++;
+            updateTotals();
+        });
+
+        // Initial calculation
+        updateTotals();
+
+    });
+</script>
+
+
+<script>
+    function openCustomerSelect() {
+        const select = document.getElementById('customerSelect');
+        if (!select) return;
+
+        setTimeout(() => {
+            const optionCount = select.options.length;
+            select.size = Math.min(optionCount, 5);
+            select.focus();
+
+            if (optionCount === 2) {
+                select.selectedIndex = 1;
+                select.dispatchEvent(new Event('change'));
+                select.size = 1;
+            }
+        }, 0);
+    }
+
+    document.addEventListener('change', function(e) {
+        if (e.target.id === 'customerSelect') {
+            const selectedOption = e.target.options[e.target.selectedIndex];
+            const phoneInput = document.getElementById('customerPhone');
+            phoneInput.value = selectedOption?.dataset?.phone || '';
+        }
+    });
+</script> --}}

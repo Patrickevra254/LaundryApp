@@ -1,0 +1,4602 @@
+{{--
+
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h4 class="fw-bold mb-1">Customers</h4>
+            <small class="text-muted">Manage all registered customers</small>
+        </div>
+
+        <!-- Add Customer Button triggers modal -->
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+            <i class="fa fa-user-plus me-1"></i> Add Customer
+        </button>
+    </div>
+
+    <!-- Filters -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-center flex-wrap">
+
+                <div class="col-12 col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light">
+                            <i class="fa fa-search"></i>
+                        </span>
+                        <input type="text" class="form-control" placeholder="Search by name or email">
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-3">
+                    <select class="form-select">
+                        <option value="">All Status</option>
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
+                    </select>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Customers Table -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 mobile-friendly">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Customer</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @forelse ($users as $user)
+                            <tr>
+                                <td data-label="#"> {{ $user->id }} </td>
+
+                                <td data-label="Customer">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar bg-primary text-white rounded-circle me-2">
+                                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">{{ $user->name }}</div>
+                                            <small class="text-muted">Customer</small>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td data-label="Email"> {{ $user->email }} </td>
+
+                                <td data-label="Status">
+                                    @if ($user->active)
+                                        <span class="badge bg-success-subtle text-success px-3 py-2">
+                                            ● Active
+                                        </span>
+                                    @else
+                                        <span class="badge bg-secondary-subtle text-secondary px-3 py-2">
+                                            ● Inactive
+                                        </span>
+                                    @endif
+                                </td>
+
+                                <td data-label="Actions" class="text-end">
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
+                                            <i class="fa fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <a class="dropdown-item" href="#">
+                                                    <i class="fa fa-eye me-2"></i> View
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="#">
+                                                    <i class="fa fa-edit me-2"></i> Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item text-danger" href="#">
+                                                    <i class="fa fa-trash me-2"></i> Delete
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">
+                                    No customers found
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Add Customer Modal -->
+<div class="modal fade" id="addCustomerModal" tabindex="-1" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="addCustomerModalLabel">Add Customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ route('customer.store') }}">
+                    @csrf
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Full Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0"><i
+                                        class="fas fa-user text-muted"></i></span>
+                                <input type="text" name="name" class="form-control border-start-0 ps-0"
+                                    placeholder="John Doe" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0"><i
+                                        class="fas fa-envelope text-muted"></i></span>
+                                <input type="email" name="email" class="form-control border-start-0 ps-0"
+                                    placeholder="name@company.com" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phone Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0"><i
+                                        class="fas fa-phone text-muted"></i></span>
+                                <input type="tel" name="phone" class="form-control border-start-0 ps-0"
+                                    placeholder="+1 234 567 8900" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0"><i
+                                        class="fas fa-location-dot text-muted"></i></span>
+                                <input type="text" name="address" class="form-control border-start-0 ps-0"
+                                    placeholder="123 Main Street, City, Country" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 mt-3">
+                        <label class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text border-end-0"><i class="fas fa-lock text-muted"></i></span>
+                            <input type="password" name="password" id="customerPassword"
+                                class="form-control border-start-0 border-end-0 ps-0" required>
+                            <span class="input-group-text border-start-0"
+                                onclick="togglePassword('customerPassword', this)">
+                                <i class="fas fa-eye text-muted"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Confirm Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text border-end-0"><i class="fas fa-lock text-muted"></i></span>
+                            <input type="password" name="password_confirmation" id="customerConfirmPassword"
+                                class="form-control border-start-0 border-end-0 ps-0" required>
+                            <span class="input-group-text border-start-0"
+                                onclick="togglePassword('customerConfirmPassword', this)">
+                                <i class="fas fa-eye text-muted"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input type="checkbox" name="terms" class="form-check-input" required>
+                        <label class="form-check-label small">I agree to the Terms & Privacy Policy</label>
+                    </div>
+
+                    <!-- Role -->
+                    <input type="hidden" name="role" value="customer">
+
+                    <button type="submit" class="btn btn-primary w-100">Add Customer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .avatar {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+    }
+
+    .bg-success-subtle {
+        background-color: rgba(25, 135, 84, 0.1);
+    }
+
+    .bg-secondary-subtle {
+        background-color: rgba(108, 117, 125, 0.1);
+    }
+
+    @media (max-width: 768px) {
+        .mobile-friendly thead {
+            display: none;
+        }
+
+        .mobile-friendly tr {
+            display: block;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #f1f1f1;
+        }
+
+        .mobile-friendly td {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+        .mobile-friendly td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #6c757d;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            font-size: 0.85rem;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.35em 0.5em;
+        }
+    }
+</style>
+
+<script>
+    function togglePassword(inputId, icon) {
+        const input = document.getElementById(inputId);
+        const iconElement = icon.querySelector('i');
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            iconElement.classList.remove('fa-eye');
+            iconElement.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            iconElement.classList.remove('fa-eye-slash');
+            iconElement.classList.add('fa-eye');
+        }
+    }
+</script> --}}
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h4 class="fw-bold mb-1">Customers</h4>
+            <small class="text-muted">Manage all registered customers</small>
+        </div>
+
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+            <i class="fa fa-user-plus me-1"></i> Add Customer
+        </button>
+    </div>
+
+    <!-- Customers Table -->
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                {{-- <table class="table table-hover align-middle mb-0 mobile-friendly"> --}}
+                <table class="table table-striped table-hover align-middle mobile-friendly">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Customer</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($users as $user)
+                            @if ($user->role === 'customer')
+                                <tr>
+                                    <td>{{ $user->id }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar bg-primary text-white rounded-circle me-2">
+                                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                                            </div>
+                                            <div>
+                                                <div class="fw-semibold">{{ $user->name }}</div>
+                                                <small class="text-muted">Customer</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ $user->email }}</td>
+                                    <td>
+                                        @if ($user->active)
+                                            <span class="badge bg-success-subtle text-success">● Active</span>
+                                        @else
+                                            <span class="badge bg-secondary-subtle text-secondary">● Inactive</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-light" data-bs-toggle="dropdown">
+                                                <i class="fa fa-ellipsis-v"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+
+                                                <!-- VIEW -->
+                                                <li>
+                                                    <a href="#" class="dropdown-item view-btn"
+                                                        data-id="{{ $user->id }}">
+                                                        <i class="fa fa-eye me-2"></i> View
+                                                    </a>
+                                                </li>
+
+                                                <!-- EDIT -->
+                                                <li>
+                                                    <a href="#" class="dropdown-item edit-btn"
+                                                        data-id="{{ $user->id }}">
+                                                        <i class="fa fa-edit me-2"></i> Edit
+                                                    </a>
+                                                </li>
+
+                                                <li>
+                                                    <hr class="dropdown-divider">
+                                                </li>
+
+                                                <!-- DELETE -->
+                                                <li>
+                                                    <form method="POST"
+                                                        action="{{ route('customer.destroy', $user->id) }}">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="dropdown-item text-danger"
+                                                            onclick="return confirm('Delete this Customer?')">
+                                                            <i class="fa fa-trash me-2"></i> Delete
+                                                        </button>
+                                                    </form>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endif
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">No customers found</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pagination -->
+<div class="mt-5 d-flex justify-content-center">
+    {{ $users->links('pagination::bootstrap-5') }}
+</div>
+
+{{-- ================= VIEW CUSTOMER MODAL ================= --}}
+<div class="modal fade" id="viewCustomerModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Customer Details</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <p><strong>Name:</strong> <span id="view-name"></span></p>
+                <p><strong>Email:</strong> <span id="view-email"></span></p>
+                <p><strong>Phone:</strong> <span id="view-phone"></span></p>
+                <p><strong>Address:</strong> <span id="view-address"></span></p>
+                <p><strong>Status:</strong> <span id="view-status"></span></p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{{-- ================= EDIT CUSTOMER MODAL ================= --}}
+<div class="modal fade" id="editCustomerModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <form method="POST" id="editCustomerForm">
+                @csrf
+                @method('PUT')
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Customer</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body row g-3">
+
+                    <div class="col-md-6">
+                        <label>Name</label>
+                        <input type="text" name="name" id="edit-name" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Email</label>
+                        <input type="email" name="email" id="edit-email" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Phone</label>
+                        <input type="text" name="phone" id="edit-phone" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Address</label>
+                        <input type="text" name="address" id="edit-address" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Status</label>
+                        <select name="active" id="edit-active" class="form-select">
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>New Password (optional)</label>
+                        <input type="password" name="password" class="form-control">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-primary w-100">Update Customer</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{{-- ================= ADD CUSTOMER MODAL ================= --}}
+<div class="modal fade" id="addCustomerModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Add Customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form method="POST" action="{{ route('customer.store') }}">
+                    @csrf
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label">Full Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0"><i
+                                        class="fas fa-user text-muted"></i></span>
+                                <input type="text" name="name" class="form-control border-start-0 ps-0"
+                                    placeholder="John Doe" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0"><i
+                                        class="fas fa-envelope text-muted"></i></span>
+                                <input type="email" name="email" class="form-control border-start-0 ps-0"
+                                    placeholder="name@company.com" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Phone Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0"><i
+                                        class="fas fa-phone text-muted"></i></span>
+                                <input type="tel" name="phone" class="form-control border-start-0 ps-0"
+                                    placeholder="+1 234 567 8900" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0"><i
+                                        class="fas fa-location-dot text-muted"></i></span>
+                                <input type="text" name="address" class="form-control border-start-0 ps-0"
+                                    placeholder="123 Main Street, City, Country" required>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="mb-3 mt-3">
+                        <label class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text border-end-0"><i class="fas fa-lock text-muted"></i></span>
+                            <input type="password" name="password" id="addCustomerPassword"
+                                class="form-control border-start-0 ps-0" required>
+                            <span class="input-group-text border-start-0"
+                                onclick="togglePassword('addCustomerPassword', this)">
+                                <i class="fas fa-eye text-muted"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Confirm Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text border-end-0"><i class="fas fa-lock text-muted"></i></span>
+                            <input type="password" name="password_confirmation" id="addCustomerConfirmPassword"
+                                class="form-control border-start-0 ps-0" required>
+                            <span class="input-group-text border-start-0"
+                                onclick="togglePassword('addCustomerConfirmPassword', this)">
+                                <i class="fas fa-eye text-muted"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="role" value="customer">
+                    <button type="submit" class="btn btn-primary w-100">Add Customer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- ================= JAVASCRIPT ================= --}}
+<script>
+    function togglePassword(inputId, icon) {
+        const input = document.getElementById(inputId);
+        const iconElement = icon.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            iconElement.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            input.type = 'password';
+            iconElement.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+
+    document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            fetch(`/customer/${this.dataset.id}`)
+                .then(res => res.json())
+                .then(user => {
+                    document.getElementById('view-name').textContent = user.name;
+                    document.getElementById('view-email').textContent = user.email;
+                    document.getElementById('view-phone').textContent = user.phone;
+                    document.getElementById('view-address').textContent = user.address;
+                    document.getElementById('view-status').textContent = user.active ? 'Active' :
+                        'Inactive';
+
+                    new bootstrap.Modal(document.getElementById('viewCustomerModal')).show();
+                });
+        });
+    });
+
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            fetch(`/customer/${this.dataset.id}`)
+                .then(res => res.json())
+                .then(user => {
+                    document.getElementById('edit-name').value = user.name;
+                    document.getElementById('edit-email').value = user.email;
+                    document.getElementById('edit-phone').value = user.phone;
+                    document.getElementById('edit-address').value = user.address;
+                    document.getElementById('edit-active').value = user.active;
+
+                    document.getElementById('editCustomerForm').action = `/customer/${user.id}`;
+                    new bootstrap.Modal(document.getElementById('editCustomerModal')).show();
+                });
+        });
+    });
+</script>
+
+
+
+
+<!-- book laundry -->
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h4 class="fw-bold mb-1">Book Laundry</h4>
+            <small class="text-muted">Create a new laundry order</small>
+        </div>
+    </div>
+
+    {{-- <form method="POST" action="{{ route('laundry-orders.store') }}"> --}}
+    <form method="POST" action="{{ route('payment.redirect') }}">
+        @csrf
+
+        <input type="hidden" name="email" value="{{ auth()->user()->email }}">
+        <input type="hidden" name="amount" id="paystackAmount">
+
+        <div class="row g-4">
+
+            <!-- LEFT COLUMN -->
+            <div class="col-12 col-lg-8">
+
+                <!-- ================= CUSTOMER INFORMATION ================= -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white fw-semibold">
+                        <i class="fa fa-user me-2 text-primary"></i> Customer Information
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            @if (auth()->user()->role == 'customer')
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Customer</label>
+                                    <input type="text" class="form-control" value="{{ auth()->user()->name }}"
+                                        disabled>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="text" class="form-control" value="{{ auth()->user()->phone }}"
+                                        disabled>
+                                </div>
+                                <input type="hidden" name="customer_id" value="{{ auth()->user()->id }}">
+                            @else
+                                <input type="text" name="q" class="form-control mb-2"
+                                    placeholder="Search by name or phone" hx-get="{{ route('customers.search') }}"
+                                    hx-trigger="keyup changed delay:300ms" hx-target="#customerSelect"
+                                    hx-swap="innerHTML" hx-on="htmx:afterSwap: openCustomerSelect()">
+
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Select Customer</label>
+                                    <select name="customer_id" id="customerSelect" class="form-select" required>
+                                        <option value="">-- Select Customer --</option>
+                                        @foreach ($customers as $customer)
+                                            <option value="{{ $customer->id }}" data-phone="{{ $customer->phone }}">
+                                                {{ $customer->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" id="customerPhone" class="form-control" readonly>
+                                </div>
+                            @endif
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= PICKUP & DELIVERY ================= -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white fw-semibold">
+                        <i class="fa fa-map-marker-alt me-2 text-primary"></i> Pickup & Delivery
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Pickup Address</label>
+                                <textarea name="pickup_address" class="form-control" rows="2" required></textarea>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Delivery Address</label>
+                                <textarea name="delivery_address" class="form-control" rows="2" required></textarea>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Pickup Date</label>
+                                <input type="date" name="pickup_date" class="form-control" required>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Delivery Date</label>
+                                <input type="date" name="delivery_date" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= LAUNDRY ITEMS ================= -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white fw-semibold d-flex justify-content-between align-items-center">
+                        <span>
+                            <i class="fa fa-tshirt me-2 text-primary"></i> Laundry Items
+                        </span>
+                        <button type="button" id="addItemBtn" class="btn btn-sm btn-outline-primary">
+                            <i class="fa fa-plus"></i> Add Item
+                        </button>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover align-middle mb-0 mobile-friendly">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Service Type</th>
+                                        <th>Price</th>
+                                        <th>Qty</th>
+                                        <th>Subtotal</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="itemsTableBody">
+                                    @php $firstItem = $items->first(); @endphp
+                                    <tr>
+                                        <!-- ITEM -->
+                                        <td data-label="Item">
+                                            <select name="items[0][item_id]" class="form-select item-name">
+                                                @foreach ($items as $item)
+                                                    <option value="{{ $item->id }}"
+                                                        data-washing="{{ $item->washing_price }}"
+                                                        data-ironing="{{ $item->ironing_price }}"
+                                                        data-wash_and_iron="{{ $item->wash_and_iron_price }}">
+                                                        {{ $item->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+
+                                        <!-- SERVICE TYPE -->
+                                        <td data-label="Service">
+                                            <select name="items[0][service_type]" class="form-select item-service">
+                                                <option value="washing" selected>Washing</option>
+                                                <option value="ironing">Ironing</option>
+                                                <option value="wash_and_iron">Washing & Ironing</option>
+                                            </select>
+                                        </td>
+
+                                        <!-- PRICE -->
+                                        <td data-label="Price">
+                                            <input type="hidden" name="items[0][price]" class="item-price"
+                                                value="{{ $firstItem->washing_price }}">
+                                            <input type="text" class="form-control price-display"
+                                                value="₦{{ number_format($firstItem->washing_price) }}" disabled>
+                                        </td>
+
+                                        <!-- QTY -->
+                                        <td data-label="Qty">
+                                            <input type="number" name="items[0][quantity]"
+                                                class="form-control item-qty" value="1" min="1">
+                                        </td>
+
+                                        <!-- SUBTOTAL -->
+                                        <td data-label="Subtotal" class="fw-semibold item-subtotal">
+                                            ₦{{ number_format($firstItem->washing_price) }}</td>
+
+                                        <!-- REMOVE -->
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove-item">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="col-12 col-lg-4">
+                <div class="card shadow-sm position-sticky" style="top: 80px;">
+                    <div class="card-header bg-white fw-semibold">
+                        <i class="fa fa-receipt me-2 text-primary"></i> Order Summary
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Total Items</span>
+                            <span id="totalItems">1</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal</span>
+                            <span id="subtotal">₦500</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Service Fee</span>
+                            <span>₦200</span>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between fw-bold fs-5">
+                            <span>Total</span>
+                            <span id="total">₦700</span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mt-4">
+                            <i class="fa fa-check-circle me-1"></i> Create Order
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+<style>
+    .card {
+        border-radius: 12px;
+        border: none;
+    }
+
+    .btn {
+        border-radius: 10px;
+    }
+
+    @media (max-width: 768px) {
+        .mobile-friendly thead {
+            display: none;
+        }
+
+        .mobile-friendly tr {
+            display: block;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #f1f1f1;
+        }
+
+        .mobile-friendly td {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+        .mobile-friendly td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #6c757d;
+        }
+    }
+</style>
+
+<script>
+    const ITEMS = @json($items);
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const tableBody = document.getElementById('itemsTableBody');
+        const addBtn = document.getElementById('addItemBtn');
+        let itemIndex = tableBody.querySelectorAll('tr').length;
+
+        // ---------------- UPDATE ROW PRICE ----------------
+        function updateRowPrice(row) {
+            const itemSelect = row.querySelector('.item-name');
+            const serviceSelect = row.querySelector('.item-service');
+            const priceInput = row.querySelector('.item-price');
+            const priceDisplay = row.querySelector('.price-display');
+            const qtyInput = row.querySelector('.item-qty');
+            const subtotalCell = row.querySelector('.item-subtotal');
+
+            if (!itemSelect || !serviceSelect) return;
+
+            const selectedItem = itemSelect.selectedOptions[0];
+            const service = serviceSelect.value;
+            const qty = parseInt(qtyInput.value) || 0;
+
+            const price = parseInt(selectedItem.dataset[service]) || 0;
+
+            priceInput.value = price;
+            priceDisplay.value = '₦' + price.toLocaleString();
+            subtotalCell.textContent = '₦' + (price * qty).toLocaleString();
+
+            updateTotals();
+        }
+
+        // ---------------- UPDATE TOTALS ----------------
+        function updateTotals() {
+            let totalItems = 0;
+            let subtotal = 0;
+
+            tableBody.querySelectorAll('tr').forEach(row => {
+                const qty = parseInt(row.querySelector('.item-qty')?.value) || 0;
+                const price = parseInt(row.querySelector('.item-price')?.value) || 0;
+
+                totalItems += qty;
+                subtotal += qty * price;
+            });
+
+            const serviceFee = 200;
+            const total = subtotal + serviceFee;
+
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('subtotal').textContent = '₦' + subtotal.toLocaleString();
+            document.getElementById('total').textContent = '₦' + total.toLocaleString();
+            document.getElementById('paystackAmount').value = total * 100;
+
+        }
+
+        // ---------------- EVENT LISTENERS ----------------
+        tableBody.addEventListener('change', function(e) {
+            if (e.target.classList.contains('item-name') || e.target.classList.contains(
+                    'item-service')) {
+                updateRowPrice(e.target.closest('tr'));
+            }
+        });
+
+        tableBody.addEventListener('input', function(e) {
+            if (e.target.classList.contains('item-qty')) {
+                updateRowPrice(e.target.closest('tr'));
+            }
+        });
+
+        tableBody.addEventListener('click', function(e) {
+            if (e.target.closest('.remove-item')) {
+                e.target.closest('tr').remove();
+                updateTotals();
+            }
+        });
+
+        // ---------------- ADD ITEM ----------------
+        addBtn.addEventListener('click', function() {
+            const options = ITEMS.map(item => `
+            <option value="${item.id}"
+                data-washing="${item.washing_price}"
+                data-ironing="${item.ironing_price}"
+                data-wash_and_iron="${item.wash_and_iron_price}">
+                ${item.name}
+            </option>
+        `).join('');
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+            <td data-label="Item">
+                <select name="items[${itemIndex}][item_id]" class="form-select item-name">
+                    ${options}
+                </select>
+            </td>
+
+            <td data-label="Service">
+                <select name="items[${itemIndex}][service_type]" class="form-select item-service">
+                    <option value="washing" selected>Washing</option>
+                    <option value="ironing">Ironing</option>
+                    <option value="wash_and_iron">Washing & Ironing</option>
+                </select>
+            </td>
+
+            <td data-label="Price">
+                <input type="hidden" name="items[${itemIndex}][price]" class="item-price">
+                <input type="text" class="form-control price-display" disabled>
+            </td>
+
+            <td data-label="Qty">
+                <input type="number" name="items[${itemIndex}][quantity]" class="form-control item-qty" value="1" min="1">
+            </td>
+
+            <td data-label="Subtotal" class="fw-semibold item-subtotal">₦0</td>
+
+            <td class="text-center">
+                <button type="button" class="btn btn-sm btn-outline-danger remove-item">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </td>
+        `;
+
+            tableBody.appendChild(row);
+            itemIndex++;
+
+            updateRowPrice(row);
+        });
+
+        // ---------------- INITIAL CALC ----------------
+        tableBody.querySelectorAll('tr').forEach(row => updateRowPrice(row));
+    });
+</script>
+
+<script>
+    function openCustomerSelect() {
+        const select = document.getElementById('customerSelect');
+        if (!select) return;
+
+        setTimeout(() => {
+            const optionCount = select.options.length;
+            select.size = Math.min(optionCount, 5);
+            select.focus();
+
+            if (optionCount === 2) {
+                select.selectedIndex = 1;
+                select.dispatchEvent(new Event('change'));
+                select.size = 1;
+            }
+        }, 0);
+    }
+
+    document.addEventListener('change', function(e) {
+        if (e.target.id === 'customerSelect') {
+            const selectedOption = e.target.options[e.target.selectedIndex];
+            const phoneInput = document.getElementById('customerPhone');
+            phoneInput.value = selectedOption?.dataset?.phone || '';
+        }
+    });
+</script>
+
+<script>
+document.addEventListener('change', function(e) {
+    if (e.target.id === 'customerSelect') {
+        const opt = e.target.options[e.target.selectedIndex];
+        document.getElementById('customerPhone').value = opt.dataset.phone || '';
+        document.getElementById('paystackEmail').value = opt.dataset.email || '';
+    }
+});
+</script>
+
+
+
+<!-- payment controller -->
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\LaundryOrder;
+use App\Models\LaundryOrderItem;
+use App\Models\Payment;
+use Illuminate\Support\Facades\DB;
+use Devrabiul\Paystack\Facades\Paystack;
+
+
+class PaymentController extends Controller
+{
+    /**
+     * Redirect customer to Paystack to pay
+     */
+    public function redirectToGateway(Request $request)
+    {
+        $validated = $request->validate([
+            'customer_id' => 'required|exists:users,id',
+            'pickup_address' => 'required|string',
+            'delivery_address' => 'required|string',
+            'pickup_date' => 'required|date',
+            'delivery_date' => 'required|date|after_or_equal:pickup_date',
+            'items' => 'required|array|min:1',
+            'email' => 'required|email',
+            'amount' => 'required|numeric|min:1',
+        ]);
+
+        // Save order data in session
+        session(['order_data' => $request->all()]);
+
+        // Generate unique reference
+        $reference = uniqid('laundry_');
+
+        // Check if payment already exists
+        if (Payment::where('reference', $reference)->exists()) {
+            return redirect()->route('bookLaundry')
+                ->with('error', 'Payment reference already exists. Try again.');
+        }
+
+        // Redirect to Paystack
+        return Paystack::getAuthorizationUrl([
+            'email' => $request->email,
+            'amount' => $request->amount, // amount in kobo
+            'reference' => $reference,
+        ])->redirectNow();
+    }
+
+    /**
+     * Handle Paystack callback after payment
+     */
+    public function handleGatewayCallback()
+    {
+        $paymentDetails = Paystack::getPaymentData();
+
+        if ($paymentDetails['status'] && $paymentDetails['data']['status'] === 'success') {
+
+            $orderData = session('order_data');
+
+            if (!$orderData) {
+                return redirect()->route('bookLaundry')->with('error', 'No order data found.');
+            }
+
+            $reference = $paymentDetails['data']['reference'];
+
+            // Prevent duplicate payment
+            if (Payment::where('reference', $reference)->exists()) {
+                return redirect()->route('bookLaundry')->with('error', 'Payment already processed.');
+            }
+
+            // Create order & payment inside transaction
+            $order = DB::transaction(function () use ($orderData, $paymentDetails) {
+                $subtotal = 0;
+                $totalItems = 0;
+                $serviceFee = 200;
+
+                // Create order
+                $order = LaundryOrder::create([
+                    'customer_id' => $orderData['customer_id'],
+                    'pickup_address' => $orderData['pickup_address'],
+                    'delivery_address' => $orderData['delivery_address'],
+                    'pickup_date' => $orderData['pickup_date'],
+                    'delivery_date' => $orderData['delivery_date'],
+                    'total_items' => 0,
+                    'subtotal' => 0,
+                    'service_fee' => $serviceFee,
+                    'total_amount' => 0,
+                    'payment_status' => 'paid',
+                    'created_by' => auth()->id(),
+                ]);
+
+                // Create order items
+                foreach ($orderData['items'] as $row) {
+                    $item = LaundryOrderItem::findOrFail($row['item_id']);
+                    $price = match ($row['service_type']) {
+                        'washing' => $item->washing_price,
+                        'ironing' => $item->ironing_price,
+                        'wash_and_iron' => $item->wash_and_iron_price,
+                    };
+
+                    $qty = $row['quantity'] ?? 1;
+                    $subtotal += $price * $qty;
+                    $totalItems += $qty;
+
+                    $order->items()->create([
+                        'laundry_item_id' => $item->id,
+                        'item_name' => $item->name,
+                        'service_type' => $row['service_type'],
+                        'price' => $price,
+                        'quantity' => $qty,
+                        'subtotal' => $price * $qty,
+                    ]);
+                }
+
+                // Update order totals
+                $order->update([
+                    'total_items' => $totalItems,
+                    'subtotal' => $subtotal,
+                    'total_amount' => $subtotal + $serviceFee,
+                ]);
+
+                // Save payment record
+                Payment::create([
+                    'laundry_order_id' => $order->id,
+                    'amount' => $order->total_amount,
+                    'reference' => $paymentDetails['data']['reference'],
+                    'status' => 'success',
+                    'currency' => 'NGN',
+                ]);
+
+                return $order;
+            });
+
+            session()->forget('order_data');
+
+            return redirect()->route('bookLaundry')->with('success', 'Payment successful and order created!');
+        }
+
+        return redirect()->route('bookLaundry')->with('error', 'Payment failed or cancelled.');
+    }
+}
+
+
+
+
+<!-- another modified payment controller -->
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\LaundryOrder;
+use App\Models\LaundryOrderItem;
+use App\Models\LaundryItem;
+use App\Models\Payment;
+use Illuminate\Support\Facades\DB;
+use Yabacon\Paystack;
+
+class PaymentController extends Controller
+{
+    protected $paystack;
+
+    public function __construct()
+    {
+        $this->paystack = new Paystack(env('PAYSTACK_SECRET_KEY'));
+    }
+
+    /**
+     * Redirect customer to Paystack to pay
+     */
+    public function redirectToGateway(Request $request)
+    {
+        $validated = $request->validate([
+            'customer_id' => 'required|exists:users,id',
+            'pickup_address' => 'required|string',
+            'delivery_address' => 'required|string',
+            'pickup_date' => 'required|date',
+            'delivery_date' => 'required|date|after_or_equal:pickup_date',
+            'items' => 'required|array|min:1',
+            'email' => 'required|email',
+            'amount' => 'required|numeric|min:1',
+        ]);
+
+        // Save order data in session
+        session(['order_data' => $request->all()]);
+
+        // Generate unique reference
+        $reference = uniqid('laundry_');
+
+        try {
+            $tranx = $this->paystack->transaction->initialize([
+                'amount' => $request->amount * 100, // convert to kobo
+                'email' => $request->email,
+                'reference' => $reference,
+            ]);
+
+            return redirect($tranx->data->authorization_url);
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Payment initialization failed: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Handle Paystack callback after payment
+     */
+    public function handleGatewayCallback(Request $request)
+    {
+        try {
+            $tranx = $this->paystack->transaction->verify([
+                'reference' => $request->query('reference')
+            ]);
+
+            if ($tranx->data->status !== 'success') {
+                return redirect()->route('bookLaundry')->with('error', 'Payment failed or cancelled.');
+            }
+
+            $orderData = session('order_data');
+            if (!$orderData) {
+                return redirect()->route('bookLaundry')->with('error', 'No order data found.');
+            }
+
+            $reference = $tranx->data->reference;
+
+            if (Payment::where('reference', $reference)->exists()) {
+                return redirect()->route('bookLaundry')->with('error', 'Payment already processed.');
+            }
+
+            // Create order + items + payment inside transaction
+            $order = DB::transaction(function () use ($orderData, $tranx, $reference) {
+
+                $serviceFee = 200;
+                $subtotal = 0;
+                $totalItems = 0;
+
+                // Create LaundryOrder
+                $order = LaundryOrder::create([
+                    'customer_id' => $orderData['customer_id'],
+                    'pickup_address' => $orderData['pickup_address'],
+                    'delivery_address' => $orderData['delivery_address'],
+                    'pickup_date' => $orderData['pickup_date'],
+                    'delivery_date' => $orderData['delivery_date'],
+                    'total_items' => 0,
+                    'subtotal' => 0,
+                    'service_fee' => $serviceFee,
+                    'total_amount' => 0,
+                    'payment_status' => 'paid',
+                    'created_by' => auth()->id(),
+                ]);
+
+                // Create LaundryOrderItems
+                foreach ($orderData['items'] as $row) {
+                    $item = LaundryItem::findOrFail($row['item_id']); // make sure item exists
+                    $qty = $row['quantity'] ?? 1;
+
+                    $price = match ($row['service_type']) {
+                        'washing' => $item->washing_price,
+                        'ironing' => $item->ironing_price,
+                        'wash_and_iron' => $item->wash_and_iron_price,
+                    };
+
+                    $subtotal += $price * $qty;
+                    $totalItems += $qty;
+
+                    LaundryOrderItem::create([
+                        'laundry_order_id' => $order->id,
+                        'laundry_item_id' => $item->id,
+                        'item_name' => $item->name, // no more null
+                        'service_type' => $row['service_type'],
+                        'price' => $price,
+                        'quantity' => $qty,
+                        'subtotal' => $price * $qty,
+                    ]);
+                }
+
+                // Update totals
+                $order->update([
+                    'total_items' => $totalItems,
+                    'subtotal' => $subtotal,
+                    'total_amount' => $subtotal + $serviceFee,
+                ]);
+
+                // Record Payment
+                Payment::create([
+                    'laundry_order_id' => $order->id,
+                    'amount' => $order->total_amount,
+                    'reference' => $reference,
+                    'status' => 'success',
+                    'currency' => 'NGN',
+                ]);
+
+                return $order;
+            });
+
+            session()->forget('order_data');
+
+            return redirect()->route('bookLaundry')->with('success', 'Payment successful and order created!');
+
+        } catch (\Exception $e) {
+            return redirect()->route('bookLaundry')->with('error', 'Payment verification failed: ' . $e->getMessage());
+        }
+    }
+}
+
+
+<!-- newUserRegistered -->
+<?php
+
+namespace App\Notifications;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
+
+class NewUserRegistered extends Notification
+{
+    use Queueable;
+
+    /**
+     * Create a new notification instance.
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['mail'];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     */
+    public function toMail(object $notifiable): MailMessage
+    {
+        return (new MailMessage)
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
+            ->line('Thank you for using our application!');
+    }
+
+    /**
+     * Get the array representation of the notification.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        return [
+            //
+        ];
+    }
+}
+
+<!-- updated profile -->
+<?php
+
+namespace App\Notifications;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
+
+class UserProfileUpdated extends Notification
+{
+    use Queueable;
+
+    /**
+     * Create a new notification instance.
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['mail'];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     */
+    public function toMail(object $notifiable): MailMessage
+    {
+        return (new MailMessage)
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
+            ->line('Thank you for using our application!');
+    }
+
+    /**
+     * Get the array representation of the notification.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        return [
+            //
+        ];
+    }
+}
+
+
+<!-- userremoved -->
+<?php
+
+namespace App\Notifications;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
+
+class UserRemoved extends Notification
+{
+    use Queueable;
+
+    /**
+     * Create a new notification instance.
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['mail'];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     */
+    public function toMail(object $notifiable): MailMessage
+    {
+        return (new MailMessage)
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
+            ->line('Thank you for using our application!');
+    }
+
+    /**
+     * Get the array representation of the notification.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        return [
+            //
+        ];
+    }
+}
+
+
+<!-- orderStatus Update -->
+<?php
+
+namespace App\Notifications;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
+
+class OrderStatusUpdated extends Notification
+{
+    use Queueable;
+
+    /**
+     * Create a new notification instance.
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['mail'];
+    }
+
+    /**
+     * Get the mail representation of the notification.
+     */
+    public function toMail(object $notifiable): MailMessage
+    {
+        return (new MailMessage)
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
+            ->line('Thank you for using our application!');
+    }
+
+    /**
+     * Get the array representation of the notification.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        return [
+            //
+        ];
+    }
+}
+
+
+<!-- old notifications blade -->
+<section class="notifications-section my-4">
+
+    {{-- Header --}}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">Notifications</h2>
+
+        @if ($notifications->count() > 0)
+            <div class="d-flex gap-2">
+                @if (auth()->user()->unreadNotifications->count() > 0)
+                    <form method="POST" action="{{ route('notifications.readAll') }}">
+                        @csrf
+                        <button class="btn btn-sm btn-outline-secondary">
+                            Mark all as read
+                        </button>
+                    </form>
+                @endif
+
+                <form method="POST" action="{{ route('notifications.destroyAll') }}"
+                    onsubmit="return confirm('Delete all notifications?')">
+                    @csrf
+                    @method('DELETE')
+                    <button class="btn btn-sm btn-outline-danger">
+                        Delete all
+                    </button>
+                </form>
+            </div>
+        @endif
+    </div>
+
+    {{-- Notifications list --}}
+    <div class="notifications-list">
+
+        @forelse($notifications as $notification)
+            <div class="notification-item {{ is_null($notification->read_at) ? 'unread' : '' }}">
+
+                <div class="notification-icon">
+                    <i class="fa fa-bell"></i>
+                </div>
+
+                <div class="notification-content">
+
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h6 class="mb-1">
+                            {{ $notification->data['title'] }}
+                        </h6>
+
+                        <div class="d-flex gap-2">
+                            {{-- Mark as read --}}
+                            @if (is_null($notification->read_at))
+                                <form method="POST" action="{{ route('notifications.read', $notification->id) }}">
+                                    @csrf
+                                    <button class="btn btn-sm btn-light" title="Mark as read">
+                                        <i class="fa fa-check text-success"></i>
+                                    </button>
+                                </form>
+                            @endif
+
+                            {{-- Delete --}}
+                            <form method="POST" action="{{ route('notifications.destroy', $notification->id) }}"
+                                onsubmit="return confirm('Delete this notification?')">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-sm btn-light" title="Delete">
+                                    <i class="fa fa-trash text-danger"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <p class="mb-1 text-muted">
+                        {{ $notification->data['message'] }}
+                    </p>
+
+                    <small class="text-muted">
+                        {{ $notification->created_at->diffForHumans() }}
+                    </small>
+
+                </div>
+            </div>
+        @empty
+            <div class="empty-state">
+                <i class="fa fa-bell-slash mb-2"></i>
+                <p>No notifications yet</p>
+            </div>
+        @endforelse
+
+    </div>
+
+    {{-- Pagination --}}
+    <div class="mt-5 d-flex justify-content-center">
+        {{ $notifications->links('pagination::bootstrap-5') }}
+    </div>
+
+</section>
+
+<style>
+    .notifications-section {
+        width: 100%;
+    }
+
+    .notifications-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .notification-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+        background: #ffffff;
+        border-radius: 14px;
+        border: 1px solid #eef1f5;
+        transition: all 0.2s ease;
+    }
+
+    .notification-item:hover {
+        background-color: #f8fafc;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    .notification-item.unread {
+        background: linear-gradient(135deg, #eef5ff, #ffffff);
+        border-left: 4px solid #0d6efd;
+    }
+
+    .notification-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: #e9f1ff;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1rem;
+    }
+
+    .notification-content {
+        flex: 1;
+    }
+
+    .notification-content h6 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #111;
+    }
+
+    .notification-content p {
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+
+    .notification-item .badge {
+        font-size: 0.7rem;
+        padding: 0.35em 0.55em;
+    }
+
+    .notification-content form {
+        display: inline;
+    }
+
+    .notification-content button {
+        border-radius: 50%;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #6c757d;
+    }
+
+    .empty-state i {
+        font-size: 2rem;
+        opacity: 0.6;
+    }
+
+    @media (max-width: 576px) {
+        .notification-item {
+            flex-direction: column;
+        }
+
+        .notification-icon {
+            align-self: flex-start;
+        }
+    }
+</style>
+
+
+<!-- old orderTrack -->
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="mb-4">
+        <h4 class="fw-bold mb-1">Order Tracking</h4>
+        <small class="text-muted">Manage and monitor your current orders</small>
+    </div>
+
+    <!-- Filters -->
+    <form hx-get="{{ route('orderTrack') }}" hx-target="#orderTrack-table" hx-push-url="true"
+        hx-trigger="keyup changed delay:400ms" class="d-flex gap-2 mb-3">
+
+        <input type="text" name="q" class="form-control" placeholder="Search by customer or status"
+            value="{{ request('q') }}">
+
+        {{-- <input type="month" name="month" class="form-control" value="{{ request('month') }}"> --}}
+
+        <a href="{{ route('orderTrack') }}" class="btn btn-outline-secondary" hx-get="{{ route('orderTrack') }}"
+            hx-target="#content-area" hx-push-url="true" hx-indicator=".htmx-indicator">
+            Clear
+        </a>
+    </form>
+
+
+    <!-- HTMX TARGET -->
+    <div id="orderTrack-table">
+        @include('partials.orderTrack-table')
+    </div>
+
+
+    <!-- Summary Cards -->
+    {{-- <div class="row g-3 mt-3">
+        <div class="col-md-4">
+            <div class="card summary-card shadow-sm p-3 text-center">
+                <h6>Total Orders</h6>
+                <h4>{{ $orders->total() }}</h4>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card summary-card shadow-sm p-3 text-center">
+                <h6>Total Revenue</h6>
+                <h4>₦350,000</h4>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card summary-card shadow-sm p-3 text-center">
+                <h6>Pending Orders</h6>
+                <h4>{{ $orders->where('status', 'Pending')->count() }}</h4>
+            </div>
+        </div>
+    </div>
+
+</div> --}}
+
+    <!-- Order Details Modal -->
+    @foreach ($orders as $order)
+        <!-- Order Details Modal -->
+        <div class="modal fade" id="orderDetailsModal-{{ $order->id }}" tabindex="-1"
+            aria-labelledby="orderDetailsLabel-{{ $order->id }}" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="orderDetailsLabel-{{ $order->id }}">Order Details
+                            #{{ $order->id }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <h6 class="fw-semibold">Customer Info</h6>
+                            <p><strong>Name:</strong> {{ $order->customer->name }}</p>
+                            <p><strong>Phone:</strong> {{ $order->customer->phone }}</p>
+                            <p><strong>Pickup Address:</strong> {{ $order->pickup_address }}</p>
+                            <p><strong> Delivery Address:</strong> {{ $order->delivery_address }}</p>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Service Type</th>
+                                        <th>Price</th>
+                                        <th>Qty</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                        $subtotal = 0;
+                                    @endphp
+                                    @foreach ($order->items as $item)
+                                        @php
+                                            $itemSubtotal = $item->price * $item->quantity;
+                                            $subtotal += $itemSubtotal;
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $item->item_name }}</td>
+                                            <td>{{ $item->service_type }}</td>
+                                            <td>₦{{ number_format($item->price) }}</td>
+                                            <td>{{ $item->quantity }}</td>
+                                            <td>₦{{ number_format($itemSubtotal) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th colspan="3" class="text-end">Subtotal</th>
+                                        <th>₦{{ number_format($subtotal) }}</th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="3" class="text-end">Service Fee</th>
+                                        <th>₦{{ number_format($order->service_fee) }}</th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="3" class="text-end">Total</th>
+                                        <th>₦{{ number_format($subtotal + $order->service_fee) }}</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                        <!-- Status Update Dropdown -->
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button"
+                                id="updateStatusBtn-{{ $order->id }}" data-bs-toggle="dropdown">
+                                Update Status
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="updateStatusBtn-{{ $order->id }}">
+                                @foreach (['pending', 'In progress', 'completed', 'delivered'] as $status)
+                                    <li>
+                                        <form method="POST" action="{{ route('orders.updateStatus', $order->id) }}">
+                                            @csrf
+                                            @method('PATCH')
+
+                                            <button type="submit" name="status" value="{{ $status }}"
+                                                class="dropdown-item w-100 text-start">
+                                                {{ $status }}
+                                            </button>
+                                        </form>
+                                    </li>
+                                @endforeach
+                            </ul>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+
+    <style>
+        /* Keep all your existing styles */
+        body {
+            background-color: #f6f8fb;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .card {
+            border-radius: 12px;
+            border: none;
+        }
+
+        .shadow-sm {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05) !important;
+        }
+
+        .filter-input {
+            min-width: 180px;
+            border-radius: 12px;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #dee2e6;
+            transition: 0.2s all;
+        }
+
+        .filter-input:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+            outline: none;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #e9f1ff;
+        }
+
+        .table thead th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.03em;
+            color: #495057;
+        }
+
+        .badge {
+            background-clip: padding-box;
+            display: inline-block;
+            color: inherit;
+        }
+
+        .badge.bg-warning {
+            background-color: #ffc107 !important;
+            color: #212529 !important;
+        }
+
+        .badge.bg-info {
+            background-color: #0dcaf0 !important;
+            color: #212529 !important;
+        }
+
+        .badge.bg-success {
+            background-color: #198754 !important;
+            color: #fff !important;
+        }
+
+        .badge.bg-primary {
+            background-color: #0d6efd !important;
+            color: #fff !important;
+        }
+
+        .summary-card {
+            border-radius: 15px;
+            background: linear-gradient(135deg, #e3f2fd, #ffffff);
+            transition: 0.3s transform;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .summary-card h6 {
+            color: #495057;
+        }
+
+        .summary-card h4 {
+            color: #0d6efd;
+            margin-bottom: 0;
+        }
+
+        @media (max-width:768px) {
+            .filter-input {
+                width: 100%;
+            }
+        }
+
+        .btn-outline-primary,
+        .btn-outline-danger {
+            border-radius: 8px;
+            padding: 0.35rem 0.6rem;
+        }
+
+        .btn-primary {
+            border-radius: 10px;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+        }
+    </style>
+
+    {{-- <script>
+        // Filters
+        const searchOrders = document.getElementById('searchOrders');
+        const filterStatus = document.getElementById('filterStatus');
+        const filterMonth = document.getElementById('filterMonth');
+        const ordersTable = document.getElementById('ordersTable').getElementsByTagName('tbody')[0];
+
+        searchOrders.addEventListener('keyup', filterOrders);
+        filterStatus.addEventListener('change', filterOrders);
+        filterMonth.addEventListener('change', filterOrders);
+
+        function filterOrders() {
+            const searchText = searchOrders.value.toLowerCase();
+            const statusText = filterStatus.value;
+            const monthValue = filterMonth.value;
+
+            Array.from(ordersTable.rows).forEach(row => {
+                const orderId = row.cells[0].innerText.toLowerCase();
+                const customer = row.cells[1].innerText.toLowerCase();
+                const status = row.cells[6].innerText;
+                const deliveryDate = row.cells[5].innerText;
+
+                const matchesSearch = orderId.includes(searchText) || customer.includes(searchText);
+                const matchesStatus = statusText === "" || status === statusText;
+                const matchesMonth = monthValue === "" || deliveryDate.startsWith(monthValue);
+
+                row.style.display = (matchesSearch && matchesStatus && matchesMonth) ? "" : "none";
+            });
+        }
+    </script> --}}
+
+<!-- old history -->
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="mb-4">
+        <h4 class="fw-bold mb-1">History</h4>
+        <small class="text-muted">View completed and past orders</small>
+    </div>
+
+    <!-- Filters -->
+    {{-- <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+        <input type="text" id="searchHistory" class="form-control filter-input"
+            placeholder="Search by Order ID or Customer">
+
+        <select id="filterHistoryStatus" class="form-select filter-input">
+            <option value="">All Statuses</option>
+            <option value="Completed">Completed</option>
+            <option value="Delivered">Delivered</option>
+        </select>
+
+        <input type="month" id="filterMonth" class="form-control filter-input">
+    </div> --}}
+
+    <form hx-get="{{ route('history') }}" hx-target="#history-table" hx-push-url="true"
+        hx-trigger="keyup changed delay:400ms" class="d-flex gap-2 mb-3">
+
+        <input type="text" name="q" class="form-control" placeholder="Search by customer or status"
+            value="{{ request('q') }}">
+
+        {{-- <input type="month" name="month" class="form-control" value="{{ request('month') }}"> --}}
+
+        <a href="{{ route('history') }}" class="btn btn-outline-secondary" hx-get="{{ route('history') }}"
+            hx-target="#content-area" hx-push-url="true" hx-indicator=".htmx-indicator">
+            Clear
+        </a>
+    </form>
+
+
+    <!-- HTMX TARGET -->
+    <div id="history-table">
+        @include('partials.history-table')
+    </div>
+
+    <!-- Summary Cards -->
+    {{-- <div class="row g-3 mt-3">
+        <div class="col-md-4">
+            <div class="card summary-card shadow-sm p-3 text-center">
+                <h6>Total Orders</h6>
+                <h4>{{ $orders->total() }}</h4>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card summary-card shadow-sm p-3 text-center">
+                <h6>Total Revenue</h6>
+                <h4>₦350,000</h4>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card summary-card shadow-sm p-3 text-center">
+                <h6>Average Order Value</h6>
+                <h4>
+                    ₦{{ $orders->count() ? number_format(350000 / $orders->count()) : 0 }}
+                </h4>
+            </div>
+        </div>
+    </div> --}}
+
+</div>
+
+<style>
+    body {
+        background-color: #f6f8fb;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .card {
+        border-radius: 12px;
+        border: none;
+    }
+
+    .shadow-sm {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05) !important;
+    }
+
+    .filter-input {
+        min-width: 180px;
+        border-radius: 12px;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #dee2e6;
+        transition: 0.2s all;
+    }
+
+    .filter-input:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        outline: none;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #e9f1ff;
+    }
+
+    .table thead th {
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.03em;
+        color: #495057;
+    }
+
+    .badge {
+        border-radius: 12px;
+        font-size: 0.75rem;
+        padding: 0.4em 0.6em;
+    }
+
+    .summary-card {
+        border-radius: 15px;
+        background: linear-gradient(135deg, #e3f2fd, #ffffff);
+        transition: 0.3s transform;
+    }
+
+    .summary-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    @media (max-width: 768px) {
+        .filter-input {
+            width: 100%;
+        }
+    }
+</style>
+
+{{-- <script>
+    const searchHistory = document.getElementById('searchHistory');
+    const filterStatus = document.getElementById('filterHistoryStatus');
+    const filterMonth = document.getElementById('filterMonth');
+    const historyTable = document.getElementById('historyTable').getElementsByTagName('tbody')[0];
+
+    searchHistory.addEventListener('keyup', filterHistory);
+    filterStatus.addEventListener('change', filterHistory);
+    filterMonth.addEventListener('change', filterHistory);
+
+    function filterHistory() {
+        const searchText = searchHistory.value.toLowerCase();
+        const statusText = filterStatus.value;
+        const monthValue = filterMonth.value;
+
+        Array.from(historyTable.rows).forEach(row => {
+            const orderId = row.cells[0].innerText.toLowerCase();
+            const customer = row.cells[1].innerText.toLowerCase();
+            const status = row.cells[6].innerText;
+            const deliveryDate = row.cells[5].innerText;
+
+            const matchesSearch = orderId.includes(searchText) || customer.includes(searchText);
+            const matchesStatus = statusText === "" || status === statusText;
+            const matchesMonth = monthValue === "" || deliveryDate.startsWith(monthValue);
+
+            row.style.display = (matchesSearch && matchesStatus && matchesMonth) ? "" : "none";
+        });
+    }
+</script> --}}
+
+
+<!-- old payments -->
+<div class="container-fluid mt-4">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <h4 class="fw-bold mb-0">Payments</h4>
+            <small class="text-muted">Overview of all transactions and records.</small>
+        </div>
+
+    </div>
+
+    <!-- SUMMARY CARDS -->
+    {{-- <div class="row g-4 mb-4">
+        <div class="col-12 col-md-4">
+            <div class="card summary-card shadow-sm p-3 h-100 text-center">
+                <h6 class="text-muted fw-semibold">Total Payments</h6>
+                <h3 class="fw-bold mt-2">₦245,000</h3>
+                <p class="small text-success">↑ +12% this month</p>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="card summary-card shadow-sm p-3 h-100 text-center">
+                <h6 class="text-muted fw-semibold">Pending</h6>
+                <h3 class="fw-bold mt-2">₦38,000</h3>
+                <p class="small text-warning">• 3 pending</p>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="card summary-card shadow-sm p-3 h-100 text-center">
+                <h6 class="text-muted fw-semibold">Failed Payments</h6>
+                <h3 class="fw-bold mt-2">₦12,500</h3>
+                <p class="small text-danger">• 1 failed</p>
+            </div>
+        </div>
+    </div> --}}
+
+    <!-- SUMMARY CARDS -->
+    <div class="row g-4 mb-4">
+
+        <!-- Total Payments -->
+        <div class="col-12 col-md-4">
+            <div class="payment-widget">
+                <div class="payment-icon bg-success bg-opacity-25 text-success">
+                    <i class="fa fa-wallet"></i>
+                </div>
+                <div class="payment-content">
+                    <h6 class="payment-title">Total Payments</h6>
+                    <h3 class="payment-value">₦245,000</h3>
+                    <div class="payment-meta text-success">
+                        <i class="fa fa-arrow-up"></i>
+                        +12% this month
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending -->
+        <div class="col-12 col-md-4">
+            <div class="payment-widget">
+                <div class="payment-icon bg-warning bg-opacity-25 text-warning">
+                    <i class="fa fa-clock"></i>
+                </div>
+                <div class="payment-content">
+                    <h6 class="payment-title">Pending</h6>
+                    <h3 class="payment-value">₦38,000</h3>
+                    <div class="payment-meta text-warning">
+                        • 3 pending
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Failed -->
+        <div class="col-12 col-md-4">
+            <div class="payment-widget">
+                <div class="payment-icon bg-danger bg-opacity-25 text-danger">
+                    <i class="fa fa-times-circle"></i>
+                </div>
+                <div class="payment-content">
+                    <h6 class="payment-title">Failed Payments</h6>
+                    <h3 class="payment-value">₦12,500</h3>
+                    <div class="payment-meta text-danger">
+                        • 1 failed
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    {{-- filters --}}
+    <form hx-get="{{ route('payments') }}" hx-target="#payment-table" hx-push-url="true"
+        hx-trigger="keyup changed delay:400ms" class="d-flex gap-2 mb-3">
+
+        <input type="text" name="search_text" class="form-control" placeholder="Search by name or status"
+            value="{{ request('search_text') }}">
+
+        {{-- <input type="month" name="search_month" class="form-control" placeholder="Search by date"
+            value="{{ request('search_month') }}"> --}}
+
+        <a href="{{ route('payments') }}" class="btn btn-outline-secondary" hx-get="{{ route('payments') }}"
+            hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator">
+            Clear
+        </a>
+    </form>
+
+
+    <!-- HTMX TARGET -->
+    <div id="payment-table">
+        @include('partials.payments-table')
+    </div>
+
+</div>
+
+<style>
+    body {
+        background-color: #f6f8fb;
+    }
+
+    /* .summary-card {
+        border-radius: 15px;
+        background: linear-gradient(135deg, #e3f2fd, #ffffff);
+        transition: 0.3s transform;
+    }
+
+    .summary-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .summary-card h6 {
+        color: #495057;
+    }
+
+    .summary-card h3 {
+        color: #0d6efd;
+        margin-bottom: 0;
+    } */
+
+    /* Table */
+    .table-hover tbody tr:hover {
+        background-color: #e9f1ff;
+    }
+
+    .badge {
+        border-radius: 12px;
+        font-size: 0.75rem;
+        padding: 0.4em 0.6em;
+        font-weight: 500;
+    }
+
+    /* Mobile-friendly table */
+    @media (max-width: 768px) {
+        .mobile-friendly thead {
+            display: none;
+        }
+
+        .mobile-friendly tr {
+            display: block;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #f1f1f1;
+        }
+
+        .mobile-friendly td {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+        .mobile-friendly td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #6c757d;
+        }
+    }
+
+    /* Search input */
+    .input-group .form-control {
+        border-radius: 12px;
+        box-shadow: none;
+        border: 1px solid #dee2e6;
+    }
+
+    .input-group .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, .25);
+    }
+
+    /* Buttons */
+    .btn-primary {
+        border-radius: 12px;
+        background: linear-gradient(135deg, #0d6efd, #0a58ca);
+        border: none;
+    }
+
+    .btn-outline-primary {
+        border-radius: 12px;
+    }
+
+    /* Payment Widgets – Glass Style */
+    .payment-widget {
+        background: rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(12px);
+        border-radius: 16px;
+        padding: 1.6rem;
+
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+
+        min-height: 130px;
+        /* consistent height */
+
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .payment-widget:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
+    }
+
+    /* Icon */
+    .payment-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        flex-shrink: 0;
+    }
+
+    /* Content */
+    .payment-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .payment-title {
+        font-size: 0.95rem;
+        opacity: 0.85;
+        margin-bottom: 2px;
+    }
+
+    .payment-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .payment-meta {
+        font-size: 0.85rem;
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+</style>
+
+<!-- old bookLaundry -->
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h4 class="fw-bold mb-1">Book Laundry</h4>
+            <small class="text-muted">Create a new laundry order</small>
+        </div>
+    </div>
+
+    <form method="POST" action="{{ route('payment.redirect') }}">
+        @csrf
+
+        <input type="hidden" name="email" id="paystackEmail" value="{{ auth()->user()->email }}">
+        <input type="hidden" name="amount" id="paystackAmount">
+
+        <div class="row g-4">
+            <!-- LEFT COLUMN -->
+            <div class="col-12 col-lg-8">
+                <!-- CUSTOMER INFO -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white fw-semibold">
+                        <i class="fa fa-user me-2 text-primary"></i> Customer Information
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            @if (auth()->user()->role == 'customer')
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Customer</label>
+                                    <input type="text" class="form-control" value="{{ auth()->user()->name }}"
+                                        disabled>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="text" class="form-control" value="{{ auth()->user()->phone }}"
+                                        disabled>
+                                </div>
+                                <input type="hidden" name="customer_id" value="{{ auth()->user()->id }}">
+                            @else
+                                <input type="text" name="q" class="form-control mb-2"
+                                    placeholder="Search by name or phone" hx-get="{{ route('customers.search') }}"
+                                    hx-trigger="keyup changed delay:300ms" hx-target="#customerSelect"
+                                    hx-swap="innerHTML" hx-on="htmx:afterSwap: openCustomerSelect()">
+
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Select Customer</label>
+                                    <select name="customer_id" id="customerSelect" class="form-select" required>
+                                        <option value="">-- Select Customer --</option>
+                                        @foreach ($customers as $customer)
+                                            <option value="{{ $customer->id }}" data-phone="{{ $customer->phone }}"
+                                                data-email="{{ $customer->email }}">
+                                                {{ $customer->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" id="customerPhone" class="form-control" readonly>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PICKUP & DELIVERY -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white fw-semibold">
+                        <i class="fa fa-map-marker-alt me-2 text-primary"></i> Pickup & Delivery
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Pickup Address</label>
+                                <textarea name="pickup_address" class="form-control" rows="2" required></textarea>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Delivery Address</label>
+                                <textarea name="delivery_address" class="form-control" rows="2" required></textarea>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Pickup Date</label>
+                                <input type="date" name="pickup_date" class="form-control" required>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Delivery Date</label>
+                                <input type="date" name="delivery_date" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LAUNDRY ITEMS -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white fw-semibold d-flex justify-content-between align-items-center">
+                        <span><i class="fa fa-tshirt me-2 text-primary"></i> Laundry Items</span>
+                        <button type="button" id="addItemBtn" class="btn btn-sm btn-outline-primary"><i
+                                class="fa fa-plus"></i> Add Item</button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover align-middle mb-0 mobile-friendly">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Service Type</th>
+                                        <th>Price</th>
+                                        <th>Qty</th>
+                                        <th>Subtotal</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="itemsTableBody">
+                                    @php $firstItem = $items->first(); @endphp
+                                    <tr>
+                                        <td data-label="Item">
+                                            <select name="items[0][item_id]" class="form-select item-name">
+                                                @foreach ($items as $item)
+                                                    <option value="{{ $item->id }}"
+                                                        data-washing="{{ $item->washing_price }}"
+                                                        data-ironing="{{ $item->ironing_price }}"
+                                                        data-wash_and_iron="{{ $item->wash_and_iron_price }}">
+                                                        {{ $item->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </td>
+                                        <td data-label="Service">
+                                            <select name="items[0][service_type]" class="form-select item-service">
+                                                <option value="washing" selected>Washing</option>
+                                                <option value="ironing">Ironing</option>
+                                                <option value="wash_and_iron">Washing & Ironing</option>
+                                            </select>
+                                        </td>
+                                        <td data-label="Price">
+                                            <input type="hidden" name="items[0][price]" class="item-price"
+                                                value="{{ $firstItem->washing_price }}">
+                                            <input type="text" class="form-control price-display"
+                                                value="₦{{ number_format($firstItem->washing_price) }}" disabled>
+                                        </td>
+                                        <td data-label="Qty">
+                                            <input type="number" name="items[0][quantity]"
+                                                class="form-control item-qty" value="1" min="1">
+                                        </td>
+                                        <td data-label="Subtotal" class="fw-semibold item-subtotal">
+                                            ₦{{ number_format($firstItem->washing_price) }}</td>
+                                        <td class="text-center">
+                                            <button type="button"
+                                                class="btn btn-sm btn-outline-danger remove-item"><i
+                                                    class="fa fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="col-12 col-lg-4">
+                <div class="card shadow-sm position-sticky" style="top: 80px;">
+                    <div class="card-header bg-white fw-semibold"><i class="fa fa-receipt me-2 text-primary"></i>
+                        Order Summary</div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2"><span>Total Items</span><span
+                                id="totalItems">1</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span>Subtotal</span><span
+                                id="subtotal">₦0</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span>Service Fee</span><span>₦200</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between fw-bold fs-5"><span>Total</span><span
+                                id="total">₦0</span></div>
+                        <button type="submit" class="btn btn-primary w-100 mt-4"><i
+                                class="fa fa-check-circle me-1"></i> Create Order</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+    .card {
+        border-radius: 12px;
+        border: none;
+    }
+
+    .btn {
+        border-radius: 10px;
+    }
+
+    @media (max-width: 768px) {
+        .mobile-friendly thead {
+            display: none;
+        }
+
+        .mobile-friendly tr {
+            display: block;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #f1f1f1;
+        }
+
+        .mobile-friendly td {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+        .mobile-friendly td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #6c757d;
+        }
+    }
+</style>
+
+<script>
+    const ITEMS = @json($items);
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const tableBody = document.getElementById('itemsTableBody');
+        const addBtn = document.getElementById('addItemBtn');
+        let itemIndex = tableBody.querySelectorAll('tr').length;
+
+        function updateRowPrice(row) {
+            const itemSelect = row.querySelector('.item-name');
+            const serviceSelect = row.querySelector('.item-service');
+            const priceInput = row.querySelector('.item-price');
+            const priceDisplay = row.querySelector('.price-display');
+            const qtyInput = row.querySelector('.item-qty');
+            const subtotalCell = row.querySelector('.item-subtotal');
+
+            const selectedItem = itemSelect.selectedOptions[0];
+            const service = serviceSelect.value;
+            const qty = parseInt(qtyInput.value) || 0;
+            const price = parseInt(selectedItem.dataset[service]) || 0;
+
+            priceInput.value = price;
+            priceDisplay.value = '₦' + price.toLocaleString();
+            subtotalCell.textContent = '₦' + (price * qty).toLocaleString();
+
+            updateTotals();
+        }
+
+        function updateTotals() {
+            let totalItems = 0;
+            let subtotal = 0;
+            const serviceFee = 200;
+
+            tableBody.querySelectorAll('tr').forEach(row => {
+                const qty = parseInt(row.querySelector('.item-qty')?.value) || 0;
+                const price = parseInt(row.querySelector('.item-price')?.value) || 0;
+                totalItems += qty;
+                subtotal += qty * price;
+            });
+
+            const total = subtotal + serviceFee;
+
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('subtotal').textContent = '₦' + subtotal.toLocaleString();
+            document.getElementById('total').textContent = '₦' + total.toLocaleString();
+            document.getElementById('paystackAmount').value = total * 100;
+        }
+
+        tableBody.addEventListener('change', e => {
+            if (e.target.classList.contains('item-name') || e.target.classList.contains(
+                    'item-service')) {
+                updateRowPrice(e.target.closest('tr'));
+            }
+        });
+
+        tableBody.addEventListener('input', e => {
+            if (e.target.classList.contains('item-qty')) {
+                updateRowPrice(e.target.closest('tr'));
+            }
+        });
+
+        tableBody.addEventListener('click', e => {
+            if (e.target.closest('.remove-item')) {
+                e.target.closest('tr').remove();
+                updateTotals();
+            }
+        });
+
+        addBtn.addEventListener('click', () => {
+            const options = ITEMS.map(item => `
+            <option value="${item.id}"
+                data-washing="${item.washing_price}"
+                data-ironing="${item.ironing_price}"
+                data-wash_and_iron="${item.wash_and_iron_price}">
+                ${item.name}
+            </option>`).join('');
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+            <td data-label="Item">
+                <select name="items[${itemIndex}][item_id]" class="form-select item-name">${options}</select>
+            </td>
+            <td data-label="Service">
+                <select name="items[${itemIndex}][service_type]" class="form-select item-service">
+                    <option value="washing" selected>Washing</option>
+                    <option value="ironing">Ironing</option>
+                    <option value="wash_and_iron">Washing & Ironing</option>
+                </select>
+            </td>
+            <td data-label="Price">
+                <input type="hidden" name="items[${itemIndex}][price]" class="item-price">
+                <input type="text" class="form-control price-display" disabled>
+            </td>
+            <td data-label="Qty">
+                <input type="number" name="items[${itemIndex}][quantity]" class="form-control item-qty" value="1" min="1">
+            </td>
+            <td data-label="Subtotal" class="fw-semibold item-subtotal">₦0</td>
+            <td class="text-center">
+                <button type="button" class="btn btn-sm btn-outline-danger remove-item"><i class="fa fa-trash"></i></button>
+            </td>`;
+            tableBody.appendChild(row);
+            itemIndex++;
+            updateRowPrice(row);
+        });
+
+        tableBody.querySelectorAll('tr').forEach(row => updateRowPrice(row));
+    });
+
+    function openCustomerSelect() {
+        const select = document.getElementById('customerSelect');
+        if (!select) return;
+
+        setTimeout(() => {
+            const optionCount = select.options.length;
+            select.size = Math.min(optionCount, 5);
+            select.focus();
+
+            if (optionCount === 2) {
+                select.selectedIndex = 1;
+                select.dispatchEvent(new Event('change'));
+                select.size = 1;
+            }
+        }, 0);
+    }
+
+    document.addEventListener('change', e => {
+        if (e.target.id === 'customerSelect') {
+            const opt = e.target.options[e.target.selectedIndex];
+            document.getElementById('customerPhone').value = opt.dataset.phone || '';
+            document.getElementById('paystackEmail').value = opt.dataset.email || '';
+        }
+    });
+</script>
+
+
+<!-- items blade -->
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h4 class="fw-bold mb-1">Laundry Items</h4>
+            <small class="text-muted">Manage types of clothes the shop can wash</small>
+        </div>
+
+        <div class="d-flex gap-2 flex-wrap">
+            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                <i class="fa fa-tags me-1"></i> Add Category
+            </button>
+
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                <i class="fa fa-plus me-1"></i> Add Item
+            </button>
+        </div>
+    </div>
+
+    <!-- Filters -->
+
+    <form hx-get="{{ route('items') }}" hx-target="#admin-table" hx-push-url="true"
+        hx-trigger="keyup changed delay:400ms" class="d-flex gap-2 mb-3">
+
+        <input type="text" name="search" class="form-control" placeholder="Search by name or category"
+            value="{{ request('search') }}">
+
+
+        <a href="{{ route('items') }}" class="btn btn-outline-secondary" hx-get="{{ route('items') }}"
+            hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator">
+            Clear
+        </a>
+    </form>
+
+    <!-- HTMX TARGET -->
+    <div id="items-table">
+        @include('partials.items-table')
+    </div>
+
+    {{-- ================= SINGLE EDIT MODAL ================= --}}
+    <div class="modal fade" id="editItemModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <form method="POST" id="editItemForm">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="modal-header">
+                        <h5 class="modal-title fw-bold">
+                            <i class="fa fa-edit me-2 text-primary"></i> Edit Laundry Item
+                        </h5>
+                        <button class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Item Name</label>
+                            <input type="text" name="name" id="edit-name" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Category</label>
+                            <select name="category_id" id="edit-category" class="form-select" required>
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category->id }}">
+                                        {{ $category->type }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Price -->
+                        {{-- <div class="mb-3">
+                        <label class="form-label fw-semibold">Price</label>
+                        <input type="text" name="price" id="edit-price" class="form-control" required>
+                    </div> --}}
+
+                        <!-- Washing Price -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Washing Price</label>
+                            <input type="text" name="washing_price" id="edit-washing_price" class="form-control"
+                                required>
+                        </div>
+
+                        <!-- Ironing Price -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Ironing Price</label>
+                            <input type="text" name="ironing_price" id="edit-ironing_price" class="form-control"
+                                required>
+                        </div>
+
+                        <!-- Wash & Iron Price -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Wash & Iron Price</label>
+                            <input type="text" name="wash_and_iron_price" id="edit-wash_and_iron_price"
+                                class="form-control" required>
+                        </div>
+
+
+                        <!-- Icon -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Icon</label>
+                            <div class="d-flex gap-2 flex-wrap">
+
+                                <label class="icon-option">
+                                    <input type="radio" name="icon" id="edit-icon" value="fa fa-tshirt" hidden>
+                                    <span><i class="fa fa-tshirt"></i></span>
+                                </label>
+
+                                <label class="icon-option">
+                                    <input type="radio" name="icon" id="edit-icon" value="fa fa-bed" hidden>
+                                    <span><i class="fa fa-bed"></i></span>
+                                </label>
+
+                                <label class="icon-option">
+                                    <input type="radio" name="icon" id="edit-icon" value="fa fa-socks" hidden>
+                                    <span><i class="fa fa-socks"></i></span>
+                                </label>
+
+                                <label class="icon-option">
+                                    <input type="radio" name="icon" id="edit-icon" value="fa fa-mitten" hidden>
+                                    <span><i class="fa fa-mitten"></i></span>
+                                </label>
+
+                                <label class="icon-option">
+                                    <input type="radio" name="icon" id="edit-icon" value="fa fa-shoe-prints"
+                                        hidden>
+                                    <span><i class="fa fa-shoe-prints"></i></span>
+                                </label>
+
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Status</label>
+                            <select name="is_active" id="edit-status" class="form-select">
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-primary w-100">
+                            Update Item
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    {{-- ================= ADD ITEM MODAL (UNCHANGED) ================= --}}
+    <div class="modal fade" id="addItemModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow-sm">
+
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">
+                        <i class="fa fa-tshirt me-2 text-primary"></i> Add Laundry Item
+                    </h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form action="{{ route('laundry-items.store') }}" method="POST">
+                        @csrf
+
+                        <!-- Item Name -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Item Name</label>
+                            <input type="text" name="name" class="form-control"
+                                placeholder="e.g. T-Shirt, Jacket" required>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Category</label>
+                            <select name="category_id" class="form-select" required>
+                                <option selected disabled>Select category</option>
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category->id }}">
+                                        {{ $category->type }}
+                                    </option>
+                                @endforeach
+                            </select>
+
+                            <!-- Quick add category -->
+                            <div class="text-end mt-1">
+                                <a href="#" class="small text-primary" data-bs-toggle="modal"
+                                    data-bs-target="#addCategoryModal" data-bs-dismiss="modal">
+                                    <i class="fa fa-plus"></i> Add new category
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Price -->
+                        {{-- <div class="mb-3">
+                        <label class="form-label fw-semibold">Price</label>
+                        <input type="text" name="price" class="form-control" placeholder="add a price"
+                            required>
+                    </div> --}}
+
+                        <!-- Washing Price -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Washing Price</label>
+                            <input type="text" name="washing_price" class="form-control"
+                                placeholder="Add washing price" required>
+                        </div>
+
+                        <!-- Ironing Price -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Ironing Price</label>
+                            <input type="text" name="ironing_price" class="form-control"
+                                placeholder="Add ironing price" required>
+                        </div>
+
+                        <!-- Wash & Iron Price -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Wash & Iron Price</label>
+                            <input type="text" name="wash_and_iron_price" class="form-control"
+                                placeholder="Add wash & iron price" required>
+                        </div>
+
+
+                        <!-- Icon -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Icon</label>
+                            <div class="d-flex gap-2 flex-wrap">
+
+                                <label class="icon-option">
+                                    <input type="radio" name="icon" value="fa fa-tshirt" hidden>
+                                    <span><i class="fa fa-tshirt"></i></span>
+                                </label>
+
+                                <label class="icon-option">
+                                    <input type="radio" name="icon" value="fa fa-bed" hidden>
+                                    <span><i class="fa fa-bed"></i></span>
+                                </label>
+
+                                <label class="icon-option">
+                                    <input type="radio" name="icon" value="fa fa-socks" hidden>
+                                    <span><i class="fa fa-socks"></i></span>
+                                </label>
+
+                                <label class="icon-option">
+                                    <input type="radio" name="icon" value="fa fa-mitten" hidden>
+                                    <span><i class="fa fa-mitten"></i></span>
+                                </label>
+
+                                <label class="icon-option">
+                                    <input type="radio" name="icon" value="fa fa-shoe-prints" hidden>
+                                    <span><i class="fa fa-shoe-prints"></i></span>
+                                </label>
+
+                            </div>
+                        </div>
+
+                        <!-- Status -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Status</label>
+                            <select name="is_active" class="form-select">
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="modal-footer px-0">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-save me-1"></i> Save Item
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ================= ADD CATEGORY MODAL ================= --}}
+    <div class="modal fade" id="addCategoryModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content shadow-sm">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">
+                        <i class="fa fa-tags me-2 text-primary"></i> Add Category
+                    </h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form action="{{ route('laundry-categories.store') }}" method="POST">
+                        @csrf
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Category Title</label>
+                            <input type="text" name="type" class="form-control" required>
+                        </div>
+
+                        <button class="btn btn-primary w-100">
+                            Save Category
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.edit-item').forEach(btn => {
+            btn.addEventListener('click', function() {
+                fetch(`/laundry-items/${this.dataset.id}`)
+                    .then(res => res.json())
+                    .then(item => {
+                        document.getElementById('edit-name').value = item.name;
+                        document.getElementById('edit-category').value = item.category_id;
+                        document.getElementById('edit-icon').value = item.icon;
+                        document.getElementById('edit-status').value = item.is_active;
+
+                        // New price fields
+                        document.getElementById('edit-washing_price').value = item.washing_price;
+                        document.getElementById('edit-ironing_price').value = item.ironing_price;
+                        document.getElementById('edit-wash_and_iron_price').value = item
+                            .wash_and_iron_price;
+
+                        document.getElementById('editItemForm').action =
+                            `/laundry-items/${item.id}`;
+
+                        new bootstrap.Modal(
+                            document.getElementById('editItemModal')
+                        ).show();
+                    });
+            });
+        });
+    </script>
+
+
+    <style>
+        .item-icon {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .icon-option span {
+            width: 42px;
+            height: 42px;
+            border: 1px solid #dee2e6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #6c757d;
+            transition: all 0.2s ease;
+        }
+
+        .icon-option input:checked+span {
+            background-color: #0d6efd;
+            color: #fff;
+            border-color: #0d6efd;
+        }
+
+        .icon-option span:hover {
+            border-color: #0d6efd;
+            color: #0d6efd;
+        }
+
+        .bg-success-subtle {
+            background-color: rgba(25, 135, 84, 0.1);
+        }
+
+        .bg-secondary-subtle {
+            background-color: rgba(108, 117, 125, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .mobile-friendly thead {
+                display: none;
+            }
+
+            .mobile-friendly tr {
+                display: block;
+                margin-bottom: 1rem;
+                border-bottom: 2px solid #f1f1f1;
+            }
+
+            .mobile-friendly td {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px;
+            }
+
+            .mobile-friendly td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #6c757d;
+            }
+
+            .item-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+
+<!-- customer page -->
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h4 class="fw-bold mb-1">Customers</h4>
+            <small class="text-muted">Manage all registered customers</small>
+        </div>
+
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+            <i class="fa fa-user-plus me-1"></i> Add Customer
+        </button>
+    </div>
+
+    <!-- Filters -->
+
+    <form hx-get="{{ route('customer') }}" hx-target="#customer-table" hx-push-url="true"
+        hx-trigger="keyup changed delay:400ms" class="d-flex gap-2 mb-3">
+
+        <input type="text" name="search" class="form-control" placeholder="Search by name, email or phone"
+            value="{{ request('search') }}">
+
+        <a href="{{ route('customer') }}" class="btn btn-outline-secondary" hx-get="{{ route('customer') }}"
+            hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator">
+            Clear
+        </a>
+    </form>
+
+
+    <!-- HTMX TARGET -->
+    <div id="customer-table">
+        @include('partials.customer-table')
+    </div>
+
+    {{-- ================= VIEW CUSTOMER MODAL ================= --}}
+    <div class="modal fade" id="viewCustomerModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Customer Details</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p><strong>Name:</strong> <span id="view-name"></span></p>
+                    <p><strong>Email:</strong> <span id="view-email"></span></p>
+                    <p><strong>Phone:</strong> <span id="view-phone"></span></p>
+                    <p><strong>Address:</strong> <span id="view-address"></span></p>
+                    <p><strong>Status:</strong> <span id="view-status"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ================= EDIT CUSTOMER MODAL ================= --}}
+    <div class="modal fade" id="editCustomerModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form method="POST" id="editCustomerForm">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Customer</h5>
+                        <button class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Name</label>
+                                <input type="text" name="name" id="edit-name" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" id="edit-email" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Phone</label>
+                                <input type="text" name="phone" id="edit-phone" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Address</label>
+                                <input type="text" name="address" id="edit-address" class="form-control" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Status</label>
+                                <select name="active" id="edit-active" class="form-select">
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">New Password (optional)</label>
+                                <input type="password" name="password" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update Customer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- ================= ADD CUSTOMER MODAL ================= --}}
+    <div class="modal fade" id="addCustomerModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Add Customer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form method="POST" action="{{ route('customer.store') }}">
+                        @csrf
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Full Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0">
+                                        <i class="fas fa-user text-muted"></i>
+                                    </span>
+                                    <input type="text" name="name" class="form-control border-start-0 ps-0"
+                                        placeholder="John Doe" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Email Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0">
+                                        <i class="fas fa-envelope text-muted"></i>
+                                    </span>
+                                    <input type="email" name="email" class="form-control border-start-0 ps-0"
+                                        placeholder="name@company.com" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Phone Number</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0">
+                                        <i class="fas fa-phone text-muted"></i>
+                                    </span>
+                                    <input type="tel" name="phone" class="form-control border-start-0 ps-0"
+                                        placeholder="+1 234 567 8900" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0">
+                                        <i class="fas fa-location-dot text-muted"></i>
+                                    </span>
+                                    <input type="text" name="address" class="form-control border-start-0 ps-0"
+                                        placeholder="123 Main Street, City, Country" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mt-2">
+                            <div class="col-md-6">
+                                <label class="form-label">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0">
+                                        <i class="fas fa-lock text-muted"></i>
+                                    </span>
+                                    <input type="password" name="password" id="addCustomerPassword"
+                                        class="form-control border-start-0 ps-0" required>
+                                    <span class="input-group-text border-start-0"
+                                        onclick="togglePassword('addCustomerPassword', this)">
+                                        <i class="fas fa-eye text-muted"></i>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Confirm Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0">
+                                        <i class="fas fa-lock text-muted"></i>
+                                    </span>
+                                    <input type="password" name="password_confirmation"
+                                        id="addCustomerConfirmPassword" class="form-control border-start-0 ps-0"
+                                        required>
+                                    <span class="input-group-text border-start-0"
+                                        onclick="togglePassword('addCustomerConfirmPassword', this)">
+                                        <i class="fas fa-eye text-muted"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="role" value="customer">
+                        <button type="submit" class="btn btn-primary w-100 mt-3">Add Customer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .avatar {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .bg-success-subtle {
+            background-color: rgba(25, 135, 84, 0.1);
+        }
+
+        .bg-secondary-subtle {
+            background-color: rgba(108, 117, 125, 0.1);
+        }
+
+        .card {
+            border-radius: 12px;
+            border: none;
+        }
+
+        .btn {
+            border-radius: 10px;
+        }
+
+        .badge {
+            border-radius: 12px;
+            font-size: 0.75rem;
+            padding: 0.4em 0.6em;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-friendly thead {
+                display: none;
+            }
+
+            .mobile-friendly tr {
+                display: block;
+                margin-bottom: 1rem;
+                border-bottom: 2px solid #f1f1f1;
+            }
+
+            .mobile-friendly td {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px;
+            }
+
+            .mobile-friendly td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #6c757d;
+            }
+
+            .avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+
+    <script>
+        function togglePassword(inputId, icon) {
+            const input = document.getElementById(inputId);
+            const iconElement = icon.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                iconElement.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                iconElement.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                fetch(`/customer/${this.dataset.id}`)
+                    .then(res => res.json())
+                    .then(user => {
+                        document.getElementById('view-name').textContent = user.name;
+                        document.getElementById('view-email').textContent = user.email;
+                        document.getElementById('view-phone').textContent = user.phone;
+                        document.getElementById('view-address').textContent = user.address;
+                        document.getElementById('view-status').textContent = user.active ? 'Active' :
+                            'Inactive';
+
+                        new bootstrap.Modal(document.getElementById('viewCustomerModal')).show();
+                    });
+            });
+        });
+
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                fetch(`/customer/${this.dataset.id}`)
+                    .then(res => res.json())
+                    .then(user => {
+                        document.getElementById('edit-name').value = user.name;
+                        document.getElementById('edit-email').value = user.email;
+                        document.getElementById('edit-phone').value = user.phone;
+                        document.getElementById('edit-address').value = user.address;
+                        document.getElementById('edit-active').value = user.active;
+
+                        document.getElementById('editCustomerForm').action = `/customer/${user.id}`;
+                        new bootstrap.Modal(document.getElementById('editCustomerModal')).show();
+                    });
+            });
+        });
+    </script>
+
+
+<!-- admin page -->
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h4 class="fw-bold mb-1">Admins</h4>
+            <small class="text-muted">Manage all registered Admins</small>
+        </div>
+
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAdminModal">
+            <i class="fa fa-user-plus me-1"></i> Add Admin
+        </button>
+    </div>
+
+    <!-- Filters -->
+
+    <form hx-get="{{ route('admin') }}" hx-target="#admin-table" hx-push-url="true" hx-trigger="keyup changed delay:400ms"
+        class="d-flex gap-2 mb-3">
+
+        <input type="text" name="search" class="form-control" placeholder="Search by name, email or phone"
+            value="{{ request('search') }}">
+
+
+        <a href="{{ route('admin') }}" class="btn btn-outline-secondary" hx-get="{{ route('admin') }}"
+            hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator">
+            Clear
+        </a>
+    </form>
+
+
+    <!-- HTMX TARGET -->
+    <div id="admin-table">
+        @include('partials.admin-table')
+    </div>
+
+
+
+    {{-- ================= VIEW ADMIN MODAL ================= --}}
+    <div class="modal fade" id="viewAdminModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Admin Details</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p><strong>Name:</strong> <span id="view-name"></span></p>
+                    <p><strong>Email:</strong> <span id="view-email"></span></p>
+                    <p><strong>Phone:</strong> <span id="view-phone"></span></p>
+                    <p><strong>Address:</strong> <span id="view-address"></span></p>
+                    <p><strong>Status:</strong> <span id="view-status"></span></p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    {{-- ================= EDIT ADMIN MODAL ================= --}}
+    <div class="modal fade" id="editAdminModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <form method="POST" id="editForm">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Admin</h5>
+                        <button class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body row g-3">
+
+                        <div class="col-md-6">
+                            <label>Name</label>
+                            <input type="text" name="name" id="edit-name" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Email</label>
+                            <input type="email" name="email" id="edit-email" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Phone</label>
+                            <input type="text" name="phone" id="edit-phone" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Address</label>
+                            <input type="text" name="address" id="edit-address" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Status</label>
+                            <select name="active" id="edit-active" class="form-select">
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>New Password (optional)</label>
+                            <input type="password" name="password" class="form-control">
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-primary w-100">Update Admin</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Admin Modal -->
+    <div class="modal fade" id="addAdminModal" tabindex="-1" aria-labelledby="addAdminModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="addAdminModalLabel">Add Admin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form method="POST" action="{{ route('admin.store') }}">
+                        @csrf
+
+                        <div class="row g-3">
+
+                            <!-- Full Name -->
+                            <div class="col-md-6">
+                                <label class="form-label">Full Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0">
+                                        <i class="fas fa-user text-muted"></i>
+                                    </span>
+                                    <input type="text" name="name" class="form-control border-start-0 ps-0"
+                                        placeholder="John Doe" required>
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-md-6">
+                                <label class="form-label">Email Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0">
+                                        <i class="fas fa-envelope text-muted"></i>
+                                    </span>
+                                    <input type="email" name="email" class="form-control border-start-0 ps-0"
+                                        placeholder="name@company.com" required>
+                                </div>
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="col-md-6">
+                                <label class="form-label">Phone Number</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0">
+                                        <i class="fas fa-phone text-muted"></i>
+                                    </span>
+                                    <input type="tel" name="phone" class="form-control border-start-0 ps-0"
+                                        placeholder="+1 234 567 8900" required>
+                                </div>
+                            </div>
+
+                            <!-- Address -->
+                            <div class="col-md-6">
+                                <label class="form-label">Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0">
+                                        <i class="fas fa-location-dot text-muted"></i>
+                                    </span>
+                                    <input type="text" name="address" class="form-control border-start-0 ps-0"
+                                        placeholder="123 Main Street, City, Country" required>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-3 mt-3">
+                            <label class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0">
+                                    <i class="fas fa-lock text-muted"></i>
+                                </span>
+                                <input type="password" name="password" id="adminPassword"
+                                    class="form-control border-start-0 border-end-0 ps-0" required>
+                                <span class="input-group-text border-start-0"
+                                    onclick="togglePassword('adminPassword', this)">
+                                    <i class="fas fa-eye text-muted"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="mb-3">
+                            <label class="form-label">Confirm Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0">
+                                    <i class="fas fa-lock text-muted"></i>
+                                </span>
+                                <input type="password" name="password_confirmation" id="adminConfirmPassword"
+                                    class="form-control border-start-0 border-end-0 ps-0" required>
+                                <span class="input-group-text border-start-0"
+                                    onclick="togglePassword('adminConfirmPassword', this)">
+                                    <i class="fas fa-eye text-muted"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Terms -->
+                        <div class="form-check mb-3">
+                            <input type="checkbox" name="terms" class="form-check-input" required>
+                            <label class="form-check-label small">
+                                I agree to the Terms & Privacy Policy
+                            </label>
+                        </div>
+
+                        <!-- Role -->
+                        <input type="hidden" name="role" value="admin">
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            Add Admin
+                        </button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {{-- ================= JAVASCRIPT ================= --}}
+        <script>
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    fetch(`/admin/${this.dataset.id}`)
+                        .then(res => res.json())
+                        .then(user => {
+                            document.getElementById('view-name').textContent = user.name;
+                            document.getElementById('view-email').textContent = user.email;
+                            document.getElementById('view-phone').textContent = user.phone;
+                            document.getElementById('view-address').textContent = user.address;
+                            document.getElementById('view-status').textContent =
+                                user.active ? 'Active' : 'Inactive';
+
+                            new bootstrap.Modal(
+                                document.getElementById('viewAdminModal')
+                            ).show();
+                        });
+                });
+            });
+
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    fetch(`/admin/${this.dataset.id}`)
+                        .then(res => res.json())
+                        .then(user => {
+                            document.getElementById('edit-name').value = user.name;
+                            document.getElementById('edit-email').value = user.email;
+                            document.getElementById('edit-phone').value = user.phone;
+                            document.getElementById('edit-address').value = user.address;
+                            document.getElementById('edit-active').value = user.active;
+
+                            document.getElementById('editForm').action =
+                                `/admin/${user.id}`;
+
+                            new bootstrap.Modal(
+                                document.getElementById('editAdminModal')
+                            ).show();
+                        });
+                });
+            });
+        </script>
+
+<!-- staff blade -->
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h4 class="fw-bold mb-1">Staffs</h4>
+            <small class="text-muted">Manage all registered staffs</small>
+        </div>
+
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStaffModal">
+            <i class="fa fa-user-plus me-1"></i> Add Staff
+        </button>
+    </div>
+
+    <!-- Filters -->
+
+    <form hx-get="{{ route('staff') }}" hx-target="#staff-table" hx-push-url="true" hx-trigger="keyup changed delay:400ms"
+        class="d-flex gap-2 mb-3">
+
+        <input type="text" name="search" class="form-control" placeholder="Search by name, email or phone"
+            value="{{ request('search') }}">
+
+        <a href="{{ route('staff') }}" class="btn btn-outline-secondary" hx-get="{{ route('staff') }}"
+            hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator">
+            Clear
+        </a>
+    </form>
+
+    <!-- HTMX TARGET -->
+    <div id="staff-table">
+        @include('partials.staff-table')
+    </div>
+</div>
+
+
+
+{{-- ================= VIEW MODAL ================= --}}
+<div class="modal fade" id="viewStaffModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Staff Details</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <p><strong>Name:</strong> <span id="view-name"></span></p>
+                <p><strong>Email:</strong> <span id="view-email"></span></p>
+                <p><strong>Phone:</strong> <span id="view-phone"></span></p>
+                <p><strong>Address:</strong> <span id="view-address"></span></p>
+                <p><strong>Status:</strong> <span id="view-status"></span></p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{{-- ================= EDIT MODAL ================= --}}
+<div class="modal fade" id="editStaffModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <form method="POST" id="editStaffForm">
+                @csrf
+                @method('PUT')
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Staff</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body row g-3">
+
+                    <div class="col-md-6">
+                        <label>Name</label>
+                        <input type="text" name="name" id="edit-name" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Email</label>
+                        <input type="email" name="email" id="edit-email" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Phone</label>
+                        <input type="text" name="phone" id="edit-phone" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Address</label>
+                        <input type="text" name="address" id="edit-address" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Status</label>
+                        <select name="active" id="edit-active" class="form-select">
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>New Password (optional)</label>
+                        <input type="password" name="password" class="form-control">
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-primary w-100">Update Staff</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- Add Staff Modal -->
+<div class="modal fade" id="addStaffModal" tabindex="-1" aria-labelledby="addStaffModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="addStaffModalLabel">Add Staff</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="{{ route('staff.store') }}">
+                @csrf
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Full Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0">
+                                    <i class="fas fa-user text-muted"></i>
+                                </span>
+                                <input type="text" name="name" class="form-control border-start-0 ps-0"
+                                    placeholder="John Doe" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0">
+                                    <i class="fas fa-envelope text-muted"></i>
+                                </span>
+                                <input type="email" name="email" class="form-control border-start-0 ps-0"
+                                    placeholder="name@company.com" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phone Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0">
+                                    <i class="fas fa-phone text-muted"></i>
+                                </span>
+                                <input type="tel" name="phone" class="form-control border-start-0 ps-0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0">
+                                    <i class="fas fa-location-dot text-muted"></i>
+                                </span>
+                                <input type="text" name="address" class="form-control border-start-0 ps-0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0">
+                                    <i class="fas fa-lock text-muted"></i>
+                                </span>
+                                <input type="password" name="password" id="addStaffPassword"
+                                    class="form-control border-start-0 ps-0" required>
+                                <span class="input-group-text border-start-0"
+                                    onclick="togglePassword('addStaffPassword', this)">
+                                    <i class="fas fa-eye text-muted"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Confirm Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0">
+                                    <i class="fas fa-lock text-muted"></i>
+                                </span>
+                                <input type="password" name="password_confirmation" id="addStaffConfirmPassword"
+                                    class="form-control border-start-0 ps-0" required>
+                                <span class="input-group-text border-start-0"
+                                    onclick="togglePassword('addStaffConfirmPassword', this)">
+                                    <i class="fas fa-eye text-muted"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="role" value="staff">
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Staff</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- ================= JAVASCRIPT ================= --}}
+<script>
+    // Toggle password visibility
+    function togglePassword(inputId, icon) {
+        const input = document.getElementById(inputId);
+        const iconElement = icon.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            iconElement.classList.remove('fa-eye');
+            iconElement.classList.add('fa-eye-slash');
+        } else {
+            input.type = 'password';
+            iconElement.classList.remove('fa-eye-slash');
+            iconElement.classList.add('fa-eye');
+        }
+    }
+
+    // View Staff
+    document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            fetch(`/staff/${this.dataset.id}`)
+                .then(res => res.json())
+                .then(user => {
+                    document.getElementById('view-name').textContent = user.name;
+                    document.getElementById('view-email').textContent = user.email;
+                    document.getElementById('view-phone').textContent = user.phone;
+                    document.getElementById('view-address').textContent = user.address;
+                    document.getElementById('view-status').textContent = user.active ? 'Active' :
+                        'Inactive';
+
+                    new bootstrap.Modal(document.getElementById('viewStaffModal')).show();
+                });
+        });
+    });
+
+    // Edit Staff
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            fetch(`/staff/${this.dataset.id}`)
+                .then(res => res.json())
+                .then(user => {
+                    document.getElementById('edit-name').value = user.name;
+                    document.getElementById('edit-email').value = user.email;
+                    document.getElementById('edit-phone').value = user.phone;
+                    document.getElementById('edit-address').value = user.address;
+                    document.getElementById('edit-active').value = user.active;
+
+                    document.getElementById('editStaffForm').action = `/staff/${user.id}`;
+
+                    new bootstrap.Modal(document.getElementById('editStaffModal')).show();
+                });
+        });
+    });
+</script>
+
+
+<!-- super admin -->
+
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h4 class="fw-bold mb-1">SuperAdmins</h4>
+            <small class="text-muted">Manage all registered SuperAdmins</small>
+        </div>
+
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSuperAdminModal">
+            <i class="fa fa-user-plus me-1"></i> Add SuperAdmin
+        </button>
+    </div>
+
+    <!-- Filters -->
+    <form hx-get="{{ route('superAdmin') }}" hx-target="#superAdmin-table" hx-push-url="true"
+        hx-trigger="keyup changed delay:400ms" class="d-flex gap-2 mb-3">
+
+        <input type="text" name="search" class="form-control" placeholder="Search by name, email or phone"
+            value="{{ request('search') }}">
+
+
+        <a href="{{ route('superAdmin') }}" class="btn btn-outline-secondary" hx-get="{{ route('superAdmin') }}"
+            hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator">
+            Clear
+        </a>
+    </form>
+
+
+    <!-- HTMX TARGET -->
+    <div id="superAdmin-table">
+        @include('partials.superAdmin-table')
+    </div>
+
+    {{-- ================= VIEW MODAL ================= --}}
+    <div class="modal fade" id="viewSuperAdminModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">SuperAdmin Details</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p><strong>Name:</strong> <span id="view-name"></span></p>
+                    <p><strong>Email:</strong> <span id="view-email"></span></p>
+                    <p><strong>Phone:</strong> <span id="view-phone"></span></p>
+                    <p><strong>Address:</strong> <span id="view-address"></span></p>
+                    <p><strong>Status:</strong> <span id="view-status"></span></p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    {{-- ================= EDIT MODAL ================= --}}
+    <div class="modal fade" id="editSuperAdminModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <form method="POST" id="editForm">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit SuperAdmin</h5>
+                        <button class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body row g-3">
+
+                        <div class="col-md-6">
+                            <label>Name</label>
+                            <input type="text" name="name" id="edit-name" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Email</label>
+                            <input type="email" name="email" id="edit-email" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Phone</label>
+                            <input type="text" name="phone" id="edit-phone" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Address</label>
+                            <input type="text" name="address" id="edit-address" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Status</label>
+                            <select name="active" id="edit-active" class="form-select">
+                                <option value="1">Active</option>
+                                <option value="0">Inactive</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>New Password (optional)</label>
+                            <input type="password" name="password" class="form-control">
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-primary w-100">Update SuperAdmin</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Add SuperAdmin Modal -->
+    <div class="modal fade" id="addSuperAdminModal" tabindex="-1" aria-labelledby="addSuperAdminModalLabel"
+        aria-hidden="true">
+
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="addSuperAdminModalLabel">
+                        Add SuperAdmin
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form method="POST" action="{{ route('superAdmin.store') }}">
+                        @csrf
+
+                        <div class="row g-3">
+
+                            <!-- Full Name -->
+                            <div class="col-md-6">
+                                <label class="form-label">Full Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0">
+                                        <i class="fas fa-user text-muted"></i>
+                                    </span>
+                                    <input type="text" name="name" class="form-control border-start-0 ps-0"
+                                        placeholder="John Doe" required>
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-md-6">
+                                <label class="form-label">Email Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0">
+                                        <i class="fas fa-envelope text-muted"></i>
+                                    </span>
+                                    <input type="email" name="email" class="form-control border-start-0 ps-0"
+                                        placeholder="name@company.com" required>
+                                </div>
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="col-md-6">
+                                <label class="form-label">Phone Number</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0">
+                                        <i class="fas fa-phone text-muted"></i>
+                                    </span>
+                                    <input type="tel" name="phone" class="form-control border-start-0 ps-0"
+                                        placeholder="+1 234 567 8900" required>
+                                </div>
+                            </div>
+
+                            <!-- Address -->
+                            <div class="col-md-6">
+                                <label class="form-label">Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-end-0">
+                                        <i class="fas fa-location-dot text-muted"></i>
+                                    </span>
+                                    <input type="text" name="address" class="form-control border-start-0 ps-0"
+                                        placeholder="123 Main Street, City, Country" required>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-3 mt-3">
+                            <label class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0">
+                                    <i class="fas fa-lock text-muted"></i>
+                                </span>
+                                <input type="password" name="password" id="superAdminPassword"
+                                    class="form-control border-start-0 border-end-0 ps-0" required>
+                                <span class="input-group-text border-start-0"
+                                    onclick="togglePassword('superAdminPassword', this)">
+                                    <i class="fas fa-eye text-muted"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="mb-3">
+                            <label class="form-label">Confirm Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text border-end-0">
+                                    <i class="fas fa-lock text-muted"></i>
+                                </span>
+                                <input type="password" name="password_confirmation" id="superAdminConfirmPassword"
+                                    class="form-control border-start-0 border-end-0 ps-0" required>
+                                <span class="input-group-text border-start-0"
+                                    onclick="togglePassword('superAdminConfirmPassword', this)">
+                                    <i class="fas fa-eye text-muted"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Terms -->
+                        <div class="form-check mb-3">
+                            <input type="checkbox" name="terms" class="form-check-input" required>
+                            <label class="form-check-label small">
+                                I agree to the Terms & Privacy Policy
+                            </label>
+                        </div>
+
+                        <!-- Role -->
+                        <input type="hidden" name="role" value="superadmin">
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            Add SuperAdmin
+                        </button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {{-- ================= JAVASCRIPT ================= --}}
+        <script>
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    fetch(`/super-admin/${this.dataset.id}`)
+                        .then(res => res.json())
+                        .then(user => {
+                            document.getElementById('view-name').textContent = user.name;
+                            document.getElementById('view-email').textContent = user.email;
+                            document.getElementById('view-phone').textContent = user.phone;
+                            document.getElementById('view-address').textContent = user.address;
+                            document.getElementById('view-status').textContent =
+                                user.active ? 'Active' : 'Inactive';
+
+                            new bootstrap.Modal(
+                                document.getElementById('viewSuperAdminModal')
+                            ).show();
+                        });
+                });
+            });
+
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    fetch(`/super-admin/${this.dataset.id}`)
+                        .then(res => res.json())
+                        .then(user => {
+                            document.getElementById('edit-name').value = user.name;
+                            document.getElementById('edit-email').value = user.email;
+                            document.getElementById('edit-phone').value = user.phone;
+                            document.getElementById('edit-address').value = user.address;
+                            document.getElementById('edit-active').value = user.active;
+
+                            document.getElementById('editForm').action =
+                                `/super-admin/${user.id}`;
+
+                            new bootstrap.Modal(
+                                document.getElementById('editSuperAdminModal')
+                            ).show();
+                        });
+                });
+            });
+        </script>
+
+
+<!-- old side bar -->
+
+
+<!-- Sidebar -->
+<aside class="sidebar d-flex flex-column p-3">
+
+    <div class="sidebar-header text-center">
+        <a href="{{ route('admin-dashboard') }}"
+            class="d-flex align-items-center justify-content-center text-decoration-none">
+            <i class="fa fa-home fa-lg me-2"></i>
+            <span class="fs-5 fw-bold d-md-inline">Dashboard</span>
+        </a>
+    </div>
+
+    <ul class="nav nav-pills flex-column mb-auto">
+
+        <!-- User Management Dropdown -->
+        <li>
+            <a href="#userManagementMenu" class="nav-link d-flex align-items-center" data-bs-toggle="collapse">
+                <i class="fa fa-users-cog me-2"></i>
+                <span class="d-md-inline">Users</span>
+                <i class="fa fa-chevron-down ms-auto"></i>
+            </a>
+
+            <ul class="collapse nav flex-column ms-2" id="userManagementMenu">
+                <li>
+                    <a href="{{ route('superAdmin') }}" class="nav-link" hx-get="{{ route('superAdmin') }}"
+                        hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator">
+                        <i class="fa fa-user-shield me-2"></i> <span class="d-md-inline">SuperAdmins</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin') }}" class="nav-link" hx-get="{{ route('admin') }}"
+                        hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator">
+                        <i class="fa fa-user-cog me-2"></i> <span class="d-md-inline">Admins</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('customer') }}" class="nav-link" hx-get="{{ route('customer') }}"
+                        hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator">
+                        <i class="fa fa-users me-2"></i> <span class="d-md-inline">Customers</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('staff') }}" class="nav-link" hx-get="{{ route('staff') }}"
+                        hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator">
+                        <i class="fa fa-users me-2"></i> <span class="d-md-inline">Staffs</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        {{-- Laundry Items --}}
+        <li>
+            <a href="{{ route('items') }}" class="nav-link" hx-get="{{ route('items') }}" hx-target="#content-area"
+                hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator">
+                <i class="fa fa-book me-2"></i>
+                <span class="d-md-inline">Laundry Items</span>
+            </a>
+        </li>
+
+        <!-- Other sidebar items -->
+        <li>
+            <a href="{{ route('bookLaundry') }}" class="nav-link" hx-get="{{ route('bookLaundry') }}"
+                hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator">
+                <i class="fa fa-tshirt me-2"></i>
+                <span class="d-md-inline">Book Laundry</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ route('orderTrack') }}" class="nav-link" hx-get="{{ route('orderTrack') }}"
+                hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator">
+                <i class="fa fa-route me-2"></i>
+                <span class="d-md-inline">Orders & Tracking</span>
+            </a>
+        </li>
+
+        <!--  History, Payments, Notifications -->
+
+
+        <li>
+            <a href="{{ route('history') }}" class="nav-link" hx-get="{{ route('history') }}"
+                hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator">
+                <i class="fa fa-chart-line me-2"></i>
+                <span class="d-md-inline">History</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ route('payments') }}" class="nav-link" hx-get="{{ route('payments') }}"
+                hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator">
+                <i class="fa fa-credit-card me-2"></i>
+                <span class="d-md-inline">Payments</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ route('notifications') }}" class="nav-link" hx-get="{{ route('notifications') }}"
+                hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator">
+                <i class="fa fa-bell me-2"></i>
+                <span class="d-md-inline">Notifications</span>
+            </a>
+        </li>
+
+        <!-- Settings Dropdown (same as before) -->
+        <li>
+            <a href="#settingsMenu" class="nav-link d-flex align-items-center" data-bs-toggle="collapse">
+                <i class="fa fa-cog me-2"></i>
+                <span class="d-md-inline">Settings</span>
+                <i class="fa fa-chevron-down ms-auto"></i>
+            </a>
+
+            <ul class="collapse nav flex-column ms-2" id="settingsMenu">
+                <li>
+                    <a href="{{ route('profile') }}" class="nav-link" hx-get="{{ route('profile') }}"
+                        hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true"
+                        hx-indicator=".htmx-indicator">
+                        <i class="fa fa-user me-2"></i> <span class="d-md-inline">Profile</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('preferences') }}" class="nav-link" hx-get="{{ route('preferences') }}"
+                        hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true"
+                        hx-indicator=".htmx-indicator">
+                        <i class="fa fa-sliders-h me-2"></i> <span class="d-md-inline">Preferences</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <!-- Logout -->
+        <li class="mt-3">
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button class="nav-link text-danger w-100 text-start">
+                    <i class="fa fa-sign-out-alt me-2"></i>
+                    <span class="d-md-inline">Logout</span>
+                </button>
+            </form>
+        </li>
+
+    </ul>
+</aside>
