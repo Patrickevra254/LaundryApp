@@ -109,6 +109,7 @@
                     </button>
 
                     <!-- Status Update -->
+                     @if (auth()->user()->hasAnyRole(['admin', 'superAdmin', 'staff']))
                     <div class="dropdown">
                         <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
                             Update Status
@@ -128,6 +129,7 @@
                             @endforeach
                         </ul>
                     </div>
+                    @endif
                 </div>
 
             </div>
