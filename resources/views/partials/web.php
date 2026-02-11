@@ -50,6 +50,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/preferences', [AdminController::class, 'preferences'])->name('preferences');
 
     Route::get('/items', [AdminController::class, 'items'])->name('items');
+    Route::get('/category', [AdminController::class, 'category'])->name('category');
 
     Route::get('/payments', [AdminController::class, 'payments'])->name('payments');
 
@@ -106,8 +107,23 @@ Route::middleware('auth')->group(function () {
 
 
 
-    Route::post('/laundry-categories', [LaundryCategoryController::class, 'store'])
-        ->name('laundry-categories.store');
+    // Route::post('/laundry-categories', [LaundryCategoryController::class, 'store'])
+    //     ->name('laundry-categories.store');
+
+    // Route::delete('/laundry-categories/{category}', [LaundryCategoryController::class, 'destroy'])
+    //     ->name('laundry-categories.destroy');
+
+
+    // Route::prefix('laundry-categories')->group(function () {
+
+    //     Route::post('/', [LaundryCategoryController::class, 'store'])
+    //         ->name('laundry-categories.store');
+
+    //     Route::delete('/{category}', [LaundryCategoryController::class, 'destroy'])
+    //         ->name('laundry-categories.destroy');
+    // });
+
+
 
     // Laundry Items (CRUD + AJAX)
     Route::prefix('laundry-items')->group(function () {

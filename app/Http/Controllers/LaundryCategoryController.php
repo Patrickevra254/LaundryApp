@@ -19,4 +19,11 @@ class LaundryCategoryController extends Controller
 
         return redirect()->back()->with('success', 'Category added successfully');
     }
+
+    public function destroy(LaundryCategory $category)
+    {
+        $category->delete();
+
+        return redirect()->back()->with('success', 'Category deleted successfully');
+    }
 }

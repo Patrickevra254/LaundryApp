@@ -4600,3 +4600,187 @@ class OrderStatusUpdated extends Notification
 
     </ul>
 </aside>
+
+
+<!-- js sub account code -->
+//  import { useState } from 'react'
+// import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
+// import { Head, Link } from '@inertiajs/react'
+// import { ArrowLeft } from 'lucide-react'
+// import { Card, CardHeader, CardTitle, CardContent } from '@/Components/ui/card'
+// import { Button } from '@/Components/ui/button'
+// import { Badge } from '@/Components/ui/badge'
+// import { Input } from '@/Components/ui/input'
+
+/* -------------------------------------------------------
+   DUMMY DATA
+------------------------------------------------------- */
+// const initialSubAccounts = [
+//   {
+//     id: 1,
+//     accountTypeCode: '1',
+//     accountTypeName: 'Asset',
+//     subAccountCode: '10',
+//     name: 'Current Asset',
+//     description: 'Cash at Head Office',
+//     status: 'ACTIVE',
+//     displayOrder: 1,
+//   },
+//   {
+//     id: 2,
+//     accountTypeCode: '2',
+//     accountTypeName: 'Liability',
+//     subAccountCode: '14',
+//     name: 'Non - Current Asset ',
+//     description: 'Short-term loans',
+//     status: 'ACTIVE',
+//     displayOrder: 2,
+//   },
+// ]
+
+/* -------------------------------------------------------
+   PAGE
+------------------------------------------------------- */
+// export default function CreateSubAccount() {
+//   const [subAccounts] = useState(initialSubAccounts)
+//   const [open, setOpen] = useState(false)
+
+//   return (
+//     <AuthenticatedLayout>
+//       <Head title="Sub Accounts" />
+
+//       <div className="px-4 sm:px-6 lg:px-8 space-y-6">
+//         {/* HEADER */}
+//         <div className="flex items-center justify-between">
+//           <div>
+//             <h1 className="text-2xl font-bold text-gray-900">
+//               Sub Accounts
+//             </h1>
+//             <p className="text-sm text-gray-600">
+//               Sub-level accounts linked to account types
+//             </p>
+//           </div>
+
+//           <Button
+//             className="bg-purple-600 hover:bg-purple-700"
+//             onClick={() => setOpen(true)}
+//           >
+//             Add New Sub Account
+//           </Button>
+//         </div>
+
+//         {/* TABLE */}
+//         <Card>
+//           <CardHeader>
+//                   <Link href="/chart-of-accounts/accounts">
+//                         <Button variant="ghost" size="sm" className="group mb-4">
+//                             <ArrowLeft className="h-4 w-4 mr-2 text-purple-600 group-hover:text-purple-700" />
+//                             Back to Accounts
+//                         </Button>
+//                     </Link>
+//                 <CardTitle>Sub Account List</CardTitle>
+//           </CardHeader>
+
+//           <CardContent>
+//             <div className="overflow-x-auto">
+//               <table className="w-full min-w-[800px] text-sm border-collapse">
+//                 <thead>
+//                   <tr className="border-b">
+//                     <th className="text-left py-3 px-4">Account Type Code</th>
+//                     <th className="text-left py-3 px-4">Account Type Name</th>
+//                     <th className="text-left py-3 px-4">Sub Account Code</th>
+//                     <th className="text-left py-3 px-4">Sub Account Name</th>
+//                     <th className="text-left py-3 px-4">Description</th>
+//                     <th className="text-left py-3 px-4">Status</th>
+//                     <th className="text-left py-3 px-4">Display Order</th>
+//                   </tr>
+//                 </thead>
+
+//                 <tbody>
+//                   {subAccounts.map((sub) => (
+//                     <tr key={sub.id} className="border-b last:border-0">
+//                       <td className="py-3 px-4">{sub.accountTypeCode}</td>
+//                       <td className="py-3 px-4">{sub.accountTypeName}</td>
+//                       <td className="py-3 px-4">{sub.subAccountCode}</td>
+//                       <td className="py-3 px-4 font-medium">{sub.name}</td>
+//                       <td className="py-3 px-4">{sub.description}</td>
+//                       <td className="py-3 px-4">
+//                         <Badge className="bg-green-100 text-green-700">
+//                           {sub.status}
+//                         </Badge>
+//                       </td>
+//                       <td className="py-3 px-4">{sub.displayOrder}</td>
+//                     </tr>
+//                   ))}
+//                 </tbody>
+//               </table>
+//             </div>
+//           </CardContent>
+//         </Card>
+//       </div>
+
+//       {/* MODAL */}
+//       {open && (
+//         <div className="fixed inset-0 z-50 flex items-center justify-center">
+//           {/* overlay */}
+//           <div
+//             className="absolute inset-0 bg-black/40"
+//             onClick={() => setOpen(false)}
+//           />
+
+//           {/* modal content */}
+//             <div className="relative bg-white rounded-lg w-full max-w-3xl p-8">
+//                 <h2 className="text-lg font-semibold mb-6">
+//                 Create Sub Account
+//                 </h2>
+//                 <div className="grid grid-cols-1 gap-4">
+//                 {/* Account Type Code */}
+//                 <label className="flex flex-col">
+//                     Account Type Code:
+//                     <select className="border rounded px-2 py-1 mt-1 w-full">
+//                     <option value="1">1 - Asset</option>
+//                     <option value="2">2 - Liabilities</option>
+//                     <option value="3">3 - Equity</option>
+//                     </select>
+//                 </label>
+
+//                 {/* Sub Account Code */}
+//                 <Input placeholder="Sub Account Code" className="w-full" />
+
+//                 {/* Sub Account Name */}
+//                 <Input placeholder="Sub Account Name" className="w-full" />
+
+//                 {/* Description */}
+//                 <Input placeholder="Description" className="w-full" />
+
+//                 {/* Status checkbox */}
+//                 <label className="flex items-center gap-2">
+//                     <input type="checkbox" defaultChecked />
+//                     Is Active
+//                 </label>
+
+//                 {/* Display Order */}
+//                 <Input placeholder="Display Order" className="w-full" />
+//             </div>
+
+
+//             <div className="mt-6 flex justify-end gap-2">
+//               <Button
+//                 variant="outline"
+//                 onClick={() => setOpen(false)}
+//               >
+//                 Cancel
+//               </Button>
+//               <Button
+//                 className="bg-purple-600 hover:bg-purple-700"
+//                 onClick={() => setOpen(false)}
+//               >
+//                 Save
+//               </Button>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+//     </AuthenticatedLayout>
+//   )
+// }

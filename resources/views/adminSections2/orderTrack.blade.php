@@ -109,26 +109,26 @@
                     </button>
 
                     <!-- Status Update -->
-                     @if (auth()->user()->hasAnyRole(['admin', 'superAdmin', 'staff']))
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
-                            Update Status
-                        </button>
-                        <ul class="dropdown-menu">
-                            @foreach (['pending', 'In progress', 'completed', 'delivered'] as $status)
-                                <li>
-                                    <form method="POST" action="{{ route('orders.updateStatus', $order->id) }}">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button class="dropdown-item" type="submit" name="status"
-                                            value="{{ $status }}">
-                                            {{ $status }}
-                                        </button>
-                                    </form>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
+                    @if (auth()->user()->hasAnyRole(['admin', 'superAdmin', 'staff']))
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown">
+                                Update Status
+                            </button>
+                            <ul class="dropdown-menu">
+                                @foreach (['pending', 'In progress', 'completed', 'delivered'] as $status)
+                                    <li>
+                                        <form method="POST" action="{{ route('orders.updateStatus', $order->id) }}">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button class="dropdown-item" type="submit" name="status"
+                                                value="{{ $status }}">
+                                                {{ $status }}
+                                            </button>
+                                        </form>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
                     @endif
                 </div>
 

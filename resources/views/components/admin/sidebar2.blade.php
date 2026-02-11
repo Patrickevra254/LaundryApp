@@ -1,3 +1,5 @@
+{{-- {{ dd(Route::has('items')) }} --}}
+
 <!-- Sidebar -->
 <aside class="sidebar d-flex flex-column p-3">
 
@@ -61,6 +63,16 @@
                 <span class="d-md-inline">Laundry Items</span>
             </a>
         </li>
+
+
+        {{-- Laundry Category --}}
+        {{-- <li>
+            <a href="{{ route('laundryCategory') }}" class="nav-link" hx-get="{{ route('laundryCategory') }}"
+                hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator">
+                <i class="fa fa-book me-2"></i>
+                <span class="d-md-inline">Laundry Category</span>
+            </a>
+        </li> --}}
 
         <!-- Other sidebar items -->
         <li>

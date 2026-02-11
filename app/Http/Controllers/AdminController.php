@@ -283,7 +283,9 @@ class AdminController extends Controller
         $categories = LaundryCategory::orderBy('type')->get();
 
         // Base query for laundry items
-        $itemsQuery = LaundryItem::with('category')->orderBy('name');
+        // $itemsQuery = LaundryItem::with('category')->orderBy('name');
+        $itemsQuery = LaundryItem::with('category');
+
 
         // Only active items for customers
         if (auth()->user()->role === 'customer') {
@@ -304,7 +306,7 @@ class AdminController extends Controller
         }
 
         // Paginate results
-        $items = $itemsQuery->latest()->paginate(2)->withQueryString();
+        $items = $itemsQuery->latest()->paginate(5)->withQueryString();
 
         // Check for HTMX request
         if ($request->header('HX-Request')) {
@@ -315,6 +317,21 @@ class AdminController extends Controller
         return view('layouts.admin', [
             'title'   => 'Items',
             'content' => view('adminSections2.items', compact('items', 'categories'))
+        ]);
+    }
+
+
+    public function category(Request $request)
+    {
+        $categories = LaundryCategory::orderBy('type')->get();
+
+        if ($request->header('HX-Request')) {
+            return view('adminSections2.category', compact('categories'));
+        }
+
+        return view('layouts.admin', [
+            'title'   => 'Category',
+            'content' => view('adminSections2.category', compact('categories'))
         ]);
     }
 
