@@ -31,7 +31,7 @@
                           <td>{{ $payment->order->customer->name }}</td>
                           <td>{{ $payment->amount }}</td>
                           <td>{{ $payment->method }}</td>
-                          <td>{{ $payment->created_at }}</td>
+                          <td>{{ $payment->created_at->format('M d, Y g:i A') }}</td>
                           <td>
                               <span
                                   class="badge

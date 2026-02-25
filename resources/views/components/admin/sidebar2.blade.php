@@ -1,7 +1,7 @@
 {{-- {{ dd(Route::has('items')) }} --}}
 
 <!-- Sidebar -->
-<aside class="sidebar d-flex flex-column p-3">
+{{-- <aside class="sidebar d-flex flex-column p-3">
 
     <div class="sidebar-header text-center">
         <a href="{{ route('admin-dashboard') }}"
@@ -55,7 +55,7 @@
         @endif
 
 
-        {{-- Laundry Items --}}
+        <!-- Laundry Items  -->
         <li>
             <a href="{{ route('items') }}" class="nav-link" hx-get="{{ route('items') }}" hx-target="#content-area"
                 hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator">
@@ -65,14 +65,7 @@
         </li>
 
 
-        {{-- Laundry Category --}}
-        {{-- <li>
-            <a href="{{ route('laundryCategory') }}" class="nav-link" hx-get="{{ route('laundryCategory') }}"
-                hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator">
-                <i class="fa fa-book me-2"></i>
-                <span class="d-md-inline">Laundry Category</span>
-            </a>
-        </li> --}}
+
 
         <!-- Other sidebar items -->
         <li>
@@ -157,10 +150,10 @@
         </li>
 
     </ul>
-</aside>
+</aside> --}}
 
 
-<style>
+{{-- <style>
     /* ===============================
    Sidebar – Subtle Upgrade
 ================================ */
@@ -241,5 +234,195 @@
 
     .sidebar .text-danger:hover {
         background-color: rgba(220, 53, 69, 0.08);
+    }
+</style> --}}
+
+<!-- Sidebar -->
+<aside class="sidebar d-flex flex-column p-3">
+
+    <!-- Brand -->
+    <div class="sidebar-brand mb-3">
+        <a href="{{ route('admin-dashboard') }}" class="d-flex align-items-center gap-2 text-decoration-none">
+            <div class="brand-icon"><i class="fa fa-tshirt"></i></div>
+            <span class="brand-name">LaundryPro</span>
+        </a>
+    </div>
+
+    <ul class="nav flex-column mb-auto gap-1">
+
+        @if (auth()->user()->hasAnyRole(['admin', 'superAdmin', 'staff']))
+            <li>
+                <a href="#userManagementMenu" class="s-link" data-bs-toggle="collapse">
+                    <i class="fa fa-users"></i>
+                    <span>Users</span>
+                    <i class="fa fa-chevron-down ms-auto chev"></i>
+                </a>
+                <ul class="collapse nav flex-column ms-1 mt-1 gap-1" id="userManagementMenu">
+                    <li><a href="{{ route('superAdmin') }}" class="s-link s-sub" hx-get="{{ route('superAdmin') }}"
+                            hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true"
+                            hx-indicator=".htmx-indicator"><i class="fa fa-user-shield"></i> SuperAdmins</a></li>
+                    <li><a href="{{ route('admin') }}" class="s-link s-sub" hx-get="{{ route('admin') }}"
+                            hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true"
+                            hx-indicator=".htmx-indicator"><i class="fa fa-user-cog"></i> Admins</a></li>
+                    <li><a href="{{ route('customer') }}" class="s-link s-sub" hx-get="{{ route('customer') }}"
+                            hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true"
+                            hx-indicator=".htmx-indicator"><i class="fa fa-users"></i> Customers</a></li>
+                    <li><a href="{{ route('staff') }}" class="s-link s-sub" hx-get="{{ route('staff') }}"
+                            hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true"
+                            hx-indicator=".htmx-indicator"><i class="fa fa-id-badge"></i> Staff</a></li>
+                </ul>
+            </li>
+        @endif
+
+        <li><a href="{{ route('items') }}" class="s-link" hx-get="{{ route('items') }}" hx-target="#content-area"
+                hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator"><i
+                    class="fa fa-shirt"></i><span>Laundry Items</span></a></li>
+        <li><a href="{{ route('bookLaundry') }}" class="s-link" hx-get="{{ route('bookLaundry') }}"
+                hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator"><i
+                    class="fa fa-calendar-plus"></i><span>Book Laundry</span></a></li>
+        <li><a href="{{ route('orderTrack') }}" class="s-link" hx-get="{{ route('orderTrack') }}"
+                hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator"><i
+                    class="fa fa-route"></i><span>Orders & Tracking</span></a></li>
+        <li><a href="{{ route('history') }}" class="s-link" hx-get="{{ route('history') }}" hx-target="#content-area"
+                hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator"><i
+                    class="fa fa-clock-rotate-left"></i><span>History</span></a></li>
+        <li><a href="{{ route('payments') }}" class="s-link" hx-get="{{ route('payments') }}"
+                hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator"><i
+                    class="fa fa-credit-card"></i><span>Payments</span></a></li>
+        <li><a href="{{ route('notifications') }}" class="s-link" hx-get="{{ route('notifications') }}"
+                hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator"><i
+                    class="fa fa-bell"></i><span>Notifications</span></a></li>
+
+        <li class="s-divider"></li>
+
+        <li>
+            <a href="#settingsMenu" class="s-link" data-bs-toggle="collapse">
+                <i class="fa fa-gear"></i>
+                <span>Settings</span>
+                <i class="fa fa-chevron-down ms-auto chev"></i>
+            </a>
+            <ul class="collapse nav flex-column ms-1 mt-1 gap-1" id="settingsMenu">
+                <li><a href="{{ route('profile') }}" class="s-link s-sub" hx-get="{{ route('profile') }}"
+                        hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true"
+                        hx-indicator=".htmx-indicator"><i class="fa fa-user"></i> Profile</a></li>
+                <li><a href="{{ route('preferences') }}" class="s-link s-sub" hx-get="{{ route('preferences') }}"
+                        hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true"
+                        hx-indicator=".htmx-indicator"><i class="fa fa-sliders"></i> Preferences</a></li>
+            </ul>
+        </li>
+
+        <li>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button class="s-link s-logout w-100">
+                    <i class="fa fa-arrow-right-from-bracket"></i>
+                    <span>Logout</span>
+                </button>
+            </form>
+        </li>
+
+    </ul>
+</aside>
+
+<style>
+    /* Brand */
+    .sidebar-brand {
+        padding: .4rem .3rem .8rem;
+        border-bottom: 1px solid #f0f0f8;
+    }
+
+    .brand-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .8rem;
+        flex-shrink: 0;
+    }
+
+    .brand-name {
+        font-size: .95rem;
+        font-weight: 700;
+        color: #0f0f1a;
+        letter-spacing: -.01em;
+    }
+
+    /* Links */
+    .s-link {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: .55rem .75rem;
+        border-radius: 9px;
+        color: #4b5563;
+        font-size: .85rem;
+        font-weight: 500;
+        text-decoration: none;
+        border: none;
+        background: none;
+        cursor: pointer;
+        transition: all .15s;
+        width: 100%;
+    }
+
+    .s-link i {
+        width: 16px;
+        text-align: center;
+        font-size: .85rem;
+        flex-shrink: 0;
+    }
+
+    .s-link:hover {
+        background: #eef2ff;
+        color: #4f46e5;
+    }
+
+    .s-link.active {
+        background: #eef2ff;
+        color: #4f46e5;
+        font-weight: 600;
+    }
+
+    /* Submenu */
+    .s-sub {
+        font-size: .82rem;
+        padding: .45rem .75rem;
+        color: #6b7280;
+    }
+
+    .s-sub:hover {
+        color: #4f46e5;
+    }
+
+    /* Chevron */
+    .chev {
+        font-size: .6rem;
+        opacity: .5;
+        transition: transform .2s;
+    }
+
+    .s-link[aria-expanded="true"] .chev {
+        transform: rotate(180deg);
+    }
+
+    /* Divider */
+    .s-divider {
+        height: 1px;
+        background: #f0f0f8;
+        margin: .4rem 0;
+    }
+
+    /* Logout */
+    .s-logout {
+        color: #dc2626 !important;
+    }
+
+    .s-logout:hover {
+        background: #fff5f5 !important;
+        color: #b91c1c !important;
     }
 </style>

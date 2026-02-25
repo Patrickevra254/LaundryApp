@@ -38,6 +38,12 @@ class PaymentController extends Controller
 
         $reference = uniqid('laundry_');
 
+        // $email = $request->email;
+
+        // if (!$email) {
+        //     $customer = \App\Models\User::find($request->customer_id);
+        //     $email = $customer->email;
+        // }
         $response = $this->paystack->initializePayment([
             'email' => $request->email,
             'amount' => $request->amount, // in kobo

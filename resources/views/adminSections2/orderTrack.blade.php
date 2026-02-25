@@ -1,4 +1,4 @@
-<div class="container-fluid mt-2">
+{{-- <div class="container-fluid">
 
     <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
@@ -27,8 +27,6 @@
     </div>
 
 </div>
-
-
 
 <!-- Order Details Modals -->
 @foreach ($orders as $order)
@@ -137,7 +135,6 @@
     </div>
 @endforeach
 
-
 <style>
     /* Global */
     body {
@@ -242,6 +239,486 @@
         .order-filter-bar {
             flex-direction: column;
             align-items: stretch;
+        }
+    }
+</style> --}}
+
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+        <div>
+            <div class="notifs-label">Orders</div>
+            <h4 class="notifs-title mb-0">Order Tracking</h4>
+            <p class="notifs-sub mb-0">Manage and monitor your current orders</p>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <form hx-get="{{ route('orderTrack') }}" hx-target="#orderTrack-table" hx-push-url="true"
+        hx-trigger="keyup changed delay:400ms" class="h-filter mb-3">
+
+        <div class="h-search-wrap">
+            <i class="fa fa-search"></i>
+            <input type="text" name="q" class="h-search" placeholder="Search by customer or status..."
+                value="{{ request('q') }}">
+        </div>
+
+        <a href="{{ route('orderTrack') }}" class="n-btn n-btn-secondary text-decoration-none"
+            hx-get="{{ route('orderTrack') }}" hx-target="#content-area" hx-push-url="true"
+            hx-indicator=".htmx-indicator">
+            <i class="fa fa-xmark"></i> Clear
+        </a>
+    </form>
+
+    <!-- Table -->
+    <div id="orderTrack-table" class="h-table-card">
+        @include('partials.orderTrack-table')
+    </div>
+
+</div>
+
+
+<!-- Order Details Modals -->
+@foreach ($orders as $order)
+    <div class="modal fade" id="orderDetailsModal-{{ $order->id }}" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content od-modal">
+
+                <div class="od-modal-header">
+                    <div>
+                        <div class="od-order-num">Order #{{ $order->id }}</div>
+                        <div class="od-order-sub">{{ $order->created_at->format('M d, Y') }}</div>
+                    </div>
+                    <button class="od-close" data-bs-dismiss="modal"><i class="fa fa-xmark"></i></button>
+                </div>
+
+                <div class="od-modal-body">
+
+                    <!-- Customer Info -->
+                    <div class="od-info-grid mb-4">
+                        <div class="od-info-card">
+                            <div class="od-info-label"><i class="fa fa-user me-1"></i> Customer</div>
+                            <div class="od-info-value">{{ $order->customer->name }}</div>
+                        </div>
+                        <div class="od-info-card">
+                            <div class="od-info-label"><i class="fa fa-phone me-1"></i> Phone</div>
+                            <div class="od-info-value">{{ $order->customer->phone }}</div>
+                        </div>
+                        <div class="od-info-card">
+                            <div class="od-info-label"><i class="fa fa-location-dot me-1"></i> Pickup</div>
+                            <div class="od-info-value">{{ $order->pickup_address }}</div>
+                        </div>
+                        <div class="od-info-card">
+                            <div class="od-info-label"><i class="fa fa-truck me-1"></i> Delivery</div>
+                            <div class="od-info-value">{{ $order->delivery_address }}</div>
+                        </div>
+                        <div class="od-info-card">
+                            <div class="od-info-label"><i class="fa fa-circle-dot me-1"></i> Status</div>
+                            <div class="od-info-value">{{ $order->status }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Items Table -->
+                    <div class="od-table-wrap">
+                        <table class="table od-table align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Service</th>
+                                    <th>Price</th>
+                                    <th>Qty</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php $subtotal = 0; @endphp
+                                @foreach ($order->items as $item)
+                                    @php
+                                        $itemSubtotal = $item->price * $item->quantity;
+                                        $subtotal += $itemSubtotal;
+                                    @endphp
+                                    <tr>
+                                        <td>{{ $item->item_name }}</td>
+                                        <td><span class="od-service-tag">{{ $item->service_type }}</span></td>
+                                        <td>₦{{ number_format($item->price) }}</td>
+                                        <td>{{ $item->quantity }}</td>
+                                        <td>₦{{ number_format($itemSubtotal) }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                            <tfoot>
+                                <tr class="od-tfoot-row">
+                                    <td colspan="4" class="text-end text-muted small">Subtotal</td>
+                                    <td class="fw-600">₦{{ number_format($subtotal) }}</td>
+                                </tr>
+                                <tr class="od-tfoot-row">
+                                    <td colspan="4" class="text-end text-muted small">Service Fee</td>
+                                    <td class="fw-600">₦{{ number_format($order->service_fee) }}</td>
+                                </tr>
+                                <tr class="od-total-row">
+                                    <td colspan="4" class="text-end">Total</td>
+                                    <td>₦{{ number_format($subtotal + $order->service_fee) }}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                </div>
+
+                <div class="od-modal-footer">
+                    <button class="n-btn n-btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                    @if (auth()->user()->hasAnyRole(['admin', 'superAdmin', 'staff']))
+                        <div class="dropdown">
+                            <button class="n-btn n-btn-primary dropdown-toggle" data-bs-toggle="dropdown">
+                                <i class="fa fa-pen-to-square me-1"></i> Update Status
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end od-status-menu">
+                                @foreach (['pending', 'In progress', 'completed', 'delivered'] as $status)
+                                    <li>
+                                        <form method="POST" action="{{ route('orders.updateStatus', $order->id) }}">
+                                            @csrf @method('PATCH')
+                                            <button class="dropdown-item od-status-item" type="submit" name="status"
+                                                value="{{ $status }}">
+                                                {{ ucfirst($status) }}
+                                            </button>
+                                        </form>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                </div>
+
+            </div>
+        </div>
+    </div>
+@endforeach
+
+
+<style>
+    /* Reuse shared styles */
+    .notifs-label {
+        font-size: .7rem;
+        font-weight: 700;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        color: #a5b4fc;
+    }
+
+    .notifs-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #0f0f1a;
+        letter-spacing: -.02em;
+    }
+
+    .notifs-sub {
+        font-size: .82rem;
+        color: #9ca3af;
+        margin-top: 2px;
+    }
+
+    .h-filter {
+        display: flex;
+        gap: .6rem;
+        align-items: center;
+    }
+
+    .h-search-wrap {
+        position: relative;
+        flex: 1;
+    }
+
+    .h-search-wrap i {
+        position: absolute;
+        left: 11px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #c4c9d4;
+        font-size: .8rem;
+        pointer-events: none;
+    }
+
+    .h-search {
+        width: 100%;
+        border-radius: 9px;
+        border: 1px solid #e5e7eb;
+        padding: .52rem .75rem .52rem 2.1rem;
+        font-size: .85rem;
+        background: #fafafa;
+        outline: none;
+        transition: all .15s;
+        color: #111827;
+    }
+
+    .h-search:focus {
+        border-color: #a5b4fc;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, .08);
+    }
+
+    .h-search::placeholder {
+        color: #c4c9d4;
+    }
+
+    .n-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: .45rem .85rem;
+        border-radius: 8px;
+        font-size: .8rem;
+        font-weight: 600;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all .15s;
+        white-space: nowrap;
+    }
+
+    .n-btn-secondary {
+        background: #f3f4f6;
+        border-color: #e5e7eb;
+        color: #374151;
+    }
+
+    .n-btn-secondary:hover {
+        background: #e9eaec;
+        color: #111827;
+    }
+
+    .n-btn-primary {
+        background: #4f46e5;
+        color: #fff;
+    }
+
+    .n-btn-primary:hover {
+        background: #4338ca;
+    }
+
+    .h-table-card {
+        background: #fff;
+        border: 1px solid #f0f0f8;
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+    .h-table-card .table {
+        margin: 0;
+        font-size: .84rem;
+    }
+
+    .h-table-card .table thead th {
+        font-size: .72rem;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: #9ca3af;
+        font-weight: 600;
+        background: #fafafc;
+        border-bottom: 1px solid #f0f0f8;
+        padding: .75rem 1rem;
+    }
+
+    .h-table-card .table tbody td {
+        padding: .75rem 1rem;
+        color: #374151;
+        border-color: #f5f5fb;
+        vertical-align: middle;
+    }
+
+    .h-table-card .table-hover tbody tr:hover {
+        background: #f8f8fd;
+    }
+
+    .badge {
+        border-radius: 999px;
+        padding: .35em .75em;
+        font-size: .7rem;
+        font-weight: 600;
+    }
+
+    .badge.bg-success {
+        background: rgba(5, 150, 105, .12) !important;
+        color: #065f46 !important;
+    }
+
+    .badge.bg-primary {
+        background: #eef2ff !important;
+        color: #4f46e5 !important;
+    }
+
+    .badge.bg-warning {
+        background: rgba(217, 119, 6, .12) !important;
+        color: #92400e !important;
+    }
+
+    .badge.bg-info {
+        background: rgba(6, 182, 212, .12) !important;
+        color: #0e7490 !important;
+    }
+
+    .badge.bg-danger {
+        background: rgba(225, 29, 72, .1) !important;
+        color: #9f1239 !important;
+    }
+
+    /* Modal */
+    .od-modal {
+        border-radius: 16px;
+        border: 1px solid #f0f0f8;
+        overflow: hidden;
+    }
+
+    .od-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 1.2rem 1.4rem;
+        border-bottom: 1px solid #f5f5fb;
+    }
+
+    .od-order-num {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .od-order-sub {
+        font-size: .75rem;
+        color: #9ca3af;
+        margin-top: 2px;
+    }
+
+    .od-close {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        border: none;
+        background: #f3f4f6;
+        color: #6b7280;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background .15s;
+    }
+
+    .od-close:hover {
+        background: #e9eaec;
+        color: #111827;
+    }
+
+    .od-modal-body {
+        padding: 1.2rem 1.4rem;
+    }
+
+    .od-info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: .75rem;
+    }
+
+    .od-info-card {
+        background: #fafafc;
+        border: 1px solid #f0f0f8;
+        border-radius: 10px;
+        padding: .7rem .9rem;
+    }
+
+    .od-info-label {
+        font-size: .72rem;
+        color: #9ca3af;
+        font-weight: 600;
+        margin-bottom: 3px;
+    }
+
+    .od-info-value {
+        font-size: .83rem;
+        color: #111827;
+        font-weight: 500;
+    }
+
+    .od-table-wrap {
+        border: 1px solid #f0f0f8;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .od-table thead th {
+        font-size: .72rem;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        color: #9ca3af;
+        background: #fafafc;
+        border-bottom: 1px solid #f0f0f8;
+        padding: .6rem .9rem;
+    }
+
+    .od-table tbody td {
+        font-size: .83rem;
+        color: #374151;
+        border-color: #f5f5fb;
+        padding: .65rem .9rem;
+    }
+
+    .od-service-tag {
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: .72rem;
+        font-weight: 600;
+        padding: .25em .6em;
+        border-radius: 6px;
+    }
+
+    .od-tfoot-row td {
+        border-top: 1px solid #f0f0f8;
+        padding: .5rem .9rem;
+        font-size: .83rem;
+    }
+
+    .od-total-row td {
+        border-top: 2px solid #f0f0f8;
+        padding: .65rem .9rem;
+        font-weight: 700;
+        font-size: .88rem;
+        color: #111827;
+    }
+
+    .od-modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: .6rem;
+        padding: 1rem 1.4rem;
+        border-top: 1px solid #f5f5fb;
+    }
+
+    .od-status-menu {
+        border-radius: 10px;
+        border: 1px solid #f0f0f8;
+        padding: .3rem 0;
+        font-size: .83rem;
+    }
+
+    .od-status-item {
+        padding: .5rem 1rem;
+        color: #374151;
+    }
+
+    .od-status-item:hover {
+        background: #f5f5ff;
+        color: #4f46e5;
+    }
+
+    @media(max-width:576px) {
+        .h-filter {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .od-info-grid {
+            grid-template-columns: 1fr;
         }
     }
 </style>

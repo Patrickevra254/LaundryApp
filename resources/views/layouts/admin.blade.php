@@ -42,7 +42,13 @@
         @include('components.admin.sidebar2')
 
         <!-- Main content -->
-        <main id="main-content" class="flex-grow-1 p-4 position-relative">
+        {{-- <main id="main-content" class="flex-grow-1 p-4 position-relative">
+
+            @if (session('success'))
+                <div class="alert alert-success" id="success-alert">
+                    {{ session('success') }}
+                </div>
+            @endif
 
             <!-- Global Page Loader -->
             <div class="htmx-indicator text-center py-5" style="z-index: 1050;">
@@ -52,18 +58,40 @@
                 <p class="mt-3 fw-semibold mb-0">Loading, please wait...</p>
             </div>
 
-            @if (session('success'))
-                <div class="alert alert-success" id="success-alert">
-                    {{ session('success') }}
-                </div>
-            @endif
+
 
             <!-- Content Area -->
             <div id="content-area">
                 {!! $content ?? '' !!}
             </div>
 
+        </main> --}}
+
+        {{-- <main id="main-content" class="flex-grow-1 px-4 pt-3 pb-4 position-relative"> --}}
+            <main id="main-content" class="flex-grow-1 px-4 pt-2 pb-4 position-relative">
+
+            @if (session('success'))
+                <div class="alert alert-success" id="success-alert">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            <!-- Loader -->
+            <div class="htmx-indicator text-center py-5" style="z-index: 1050;">
+                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3 fw-semibold mb-0">Loading, please wait...</p>
+            </div>
+
+            <!-- Content Area -->
+            <div id="content-area" class="{{ empty($content) ? 'd-none' : '' }}">
+                {!! $content ?? '' !!}
+            </div>
+
         </main>
+
+
     </div>
 
     <!-- Footer -->
@@ -156,7 +184,7 @@
         });
     </script> --}}
 
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', () => {
             const toggleBtn = document.getElementById('sidebarToggle');
             const sidebar = document.querySelector('.sidebar');
@@ -247,7 +275,108 @@
                 }
             });
         });
+    </script> --}}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const sidebar = document.querySelector('.sidebar');
+            const contentArea = document.getElementById('content-area');
+            const loader = document.querySelector('.htmx-indicator');
+
+            // --- Ensure sidebar is visible on tablet (768–991px)
+            if (window.innerWidth >= 768 && window.innerWidth < 992) {
+                sidebar.classList.add('show');
+            }
+
+            // Sidebar toggle
+            toggleBtn?.addEventListener('click', () => {
+                if (window.innerWidth >= 767) {
+                    sidebar.classList.toggle('collapsed');
+                } else {
+                    sidebar.classList.toggle('show');
+                }
+            });
+
+            // ===== INITIAL LOADER HANDLING =====
+            // If content exists on initial load, hide loader
+            if (contentArea && contentArea.innerHTML.trim() !== '') {
+                loader.style.display = 'none';
+                contentArea.classList.remove('d-none');
+            } else {
+                loader.style.display = 'block';
+                contentArea.classList.add('d-none');
+            }
+
+            // ===== AUTHENTICATION REDIRECT HANDLERS =====
+
+            // Detect login page in response URL before swap
+            document.body.addEventListener('htmx:beforeSwap', function(event) {
+                const responseURL = event.detail.xhr.responseURL;
+
+                if (responseURL && responseURL.includes('/login')) {
+                    console.log('Login page detected in URL, doing full redirect');
+                    event.detail.shouldSwap = false;
+                    event.preventDefault();
+                    window.location.href = '/login';
+                    return false;
+                }
+            });
+
+            // Handle 401 Unauthorized responses
+            document.body.addEventListener('htmx:responseError', function(event) {
+                const xhr = event.detail.xhr;
+
+                if (xhr.status === 401) {
+                    console.log('401 Unauthorized - redirecting to login');
+                    const redirectUrl = xhr.getResponseHeader('HX-Redirect');
+                    window.location.href = redirectUrl || '/';
+                    return false;
+                }
+
+                // Show error for other errors
+                if (event.detail.target.id === 'content-area') {
+                    console.log('Error occurred');
+                    if (loader) loader.style.display = 'none';
+                    contentArea.classList.remove('d-none');
+                    contentArea.innerHTML =
+                        '<div class="alert alert-danger">Failed to load content. Please try again.</div>';
+                }
+            });
+
+            // Catch login page content after swap (last resort)
+            document.body.addEventListener('htmx:afterSwap', function(event) {
+                if (event.detail.target.id === 'content-area') {
+                    const content = event.detail.target.innerHTML.toLowerCase();
+
+                    // Check if login form was loaded
+                    if (content.includes('login') &&
+                        (content.includes('password') || content.includes('email'))) {
+                        console.log('Login form detected in content, doing full redirect');
+                        window.location.href = '/';
+                        return false;
+                    }
+
+                    console.log('Content loaded - hiding spinner');
+                    if (loader) loader.style.display = 'none';
+                    contentArea.classList.remove('d-none');
+                }
+            });
+
+            // ===== LOADING INDICATOR HANDLERS =====
+
+            // Clear content and show spinner BEFORE request starts
+            document.body.addEventListener('htmx:beforeRequest', function(event) {
+                if (event.detail.target.id === 'content-area') {
+                    console.log('Request starting - clearing content');
+                    contentArea.innerHTML = '';
+                    contentArea.classList.add('d-none');
+                    if (loader) loader.style.display = 'block';
+                }
+            });
+        });
     </script>
+
 
     {{-- Charts for report --}}
     <script>

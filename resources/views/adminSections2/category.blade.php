@@ -1,4 +1,4 @@
-<div class="container-fluid items-page mt-2">
+<div class="container-fluid items-page">
 
     <!-- Header -->
     <div class="page-header mb-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
