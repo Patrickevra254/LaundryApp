@@ -48,6 +48,9 @@ class CustomerController extends Controller
             'role' => 'customer',
         ]);
 
+         // Assign Spatie role
+        $user->assignRole('customer');
+
         // notify all admins
         $roles = User::whereIn('role', ['admin', 'superAdmin'])->get();
 

@@ -33,6 +33,9 @@ class StaffController extends Controller
             'role' => 'staff',
         ]);
 
+         // Assign Spatie role
+        $user->assignRole('staff');
+
         // notify all admins
         $roles = User::whereIn('role', ['admin', 'superAdmin'])->get();
 

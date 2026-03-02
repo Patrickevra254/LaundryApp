@@ -728,7 +728,6 @@
         font-weight: 500;
     }
 
-    /* Password toggle */
     .pw-wrap {
         position: relative;
     }
@@ -777,8 +776,21 @@
         icon.classList.toggle('fa-eye-slash', isHidden);
     }
 
+    // Always reuse the same instance — never stack duplicates
+    function getModal(id) {
+        const el = document.getElementById(id);
+        return bootstrap.Modal.getInstance(el) || new bootstrap.Modal(el);
+    }
+
+    // Nuke any orphaned backdrops whenever a modal closes
+    document.addEventListener('hidden.bs.modal', () => {
+        document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style.removeProperty('overflow');
+        document.body.style.removeProperty('padding-right');
+    });
+
     function attachStaffHandlers() {
-        // View
         document.querySelectorAll('.view-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 fetch(`/staff/${this.dataset.id}`)
@@ -790,12 +802,11 @@
                         document.getElementById('view-address').textContent = user.address || '—';
                         document.getElementById('view-status').textContent = user.active ?
                             'Active' : 'Inactive';
-                        new bootstrap.Modal(document.getElementById('viewStaffModal')).show();
+                        getModal('viewStaffModal').show();
                     });
             });
         });
 
-        // Edit
         document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 fetch(`/staff/${this.dataset.id}`)
@@ -807,13 +818,12 @@
                         document.getElementById('edit-address').value = user.address || '';
                         document.getElementById('edit-active').value = user.active;
                         document.getElementById('editStaffForm').action = `/staff/${user.id}`;
-                        new bootstrap.Modal(document.getElementById('editStaffModal')).show();
+                        getModal('editStaffModal').show();
                     });
             });
         });
     }
 
-    // Re-attach after HTMX swaps the table
     attachStaffHandlers();
     document.addEventListener('htmx:afterSettle', attachStaffHandlers);
 </script>

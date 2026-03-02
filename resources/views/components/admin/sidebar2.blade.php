@@ -241,14 +241,18 @@
 <aside class="sidebar d-flex flex-column p-3">
 
     <!-- Brand -->
-    <div class="sidebar-brand mb-3">
-        <a href="{{ route('admin-dashboard') }}" class="d-flex align-items-center gap-2 text-decoration-none">
-            <div class="brand-icon"><i class="fa fa-tshirt"></i></div>
-            <span class="brand-name">LaundryPro</span>
-        </a>
+    <div class="sidebar-brand mb-3 d-flex d-lg-none align-items-center gap-2 text-decoration-none ">
+        <div class="brand-icon"><i class="fa fa-tshirt"></i></div>
+        <span class="brand-name">LaundryPro</span>
+
     </div>
 
-    <ul class="nav flex-column mb-auto gap-1">
+    <ul class="nav flex-column mb-auto gap-1 mt-2">
+
+        <li><a href="{{ route('admin-dashboard') }}" class="s-link" hx-target="#content-area" hx-swap="innerHTML"
+                hx-push-url="true" hx-indicator=".htmx-indicator"><i class="fa fa-home"></i><span>Dashboard</span></a>
+        </li>
+
 
         @if (auth()->user()->hasAnyRole(['admin', 'superAdmin', 'staff']))
             <li>

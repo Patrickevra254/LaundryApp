@@ -31,7 +31,7 @@
 
 </head>
 
-<body class="bg-light" id="body">
+<body class="" id="body">
 
     <!-- Header / Topbar (full width) -->
     @include('components.admin.header')

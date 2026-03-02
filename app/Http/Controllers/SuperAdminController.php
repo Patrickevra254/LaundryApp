@@ -15,37 +15,42 @@ class SuperAdminController extends Controller
     public function superAdmin(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users',
             'password' => 'required|confirmed|min:8',
-            'phone' => 'required|string|max:20',
-            'address' => 'required|string|max:255',
-
+            'phone'    => 'required|string|max:20',
+            'address'  => 'required|string|max:255',
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name'     => $request->name,
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'active' => false, // ✅ Mark new user as non-active
-            'phone' => $request->phone,
-            'address' => $request->address,
-            'role' => 'superAdmin',
+            'active'   => false,
+            'phone'    => $request->phone,
+            'address'  => $request->address,
+            'role'     => 'superAdmin',
         ]);
 
-        // notify all admins
-        $roles = User::whereIn('role', ['admin', 'superAdmin'])->get();
+        // Assign Spatie role
+        $user->assignRole('superAdmin');
 
-        Notification::send($roles, new NewUserRegistered($user));
+        // Notify all admins
+        $admins = User::whereIn('role', ['admin', 'superAdmin'])
+            ->where('id', '!=', $user->id)
+            ->get();
+
+        if ($admins->isNotEmpty()) {
+            Notification::send($admins, new NewUserRegistered($user));
+        }
+
         return back()->with('success', 'Super Admin created successfully!');
     }
 
     // VIEW (for modal)
     public function show(User $user)
     {
-        // safety check
         abort_if($user->role !== 'superAdmin', 403);
-
         return response()->json($user);
     }
 
@@ -55,31 +60,28 @@ class SuperAdminController extends Controller
         abort_if($user->role !== 'superAdmin', 403);
 
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'phone' => 'required|string|max:20',
-            'address' => 'required|string|max:255',
-            'active' => 'required|boolean',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users,email,' . $user->id,
+            'phone'    => 'required|string|max:20',
+            'address'  => 'required|string|max:255',
+            'active'   => 'required|boolean',
             'password' => 'nullable|min:8',
         ]);
 
         $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
+            'name'    => $request->name,
+            'email'   => $request->email,
+            'phone'   => $request->phone,
             'address' => $request->address,
-            'active' => $request->active,
+            'active'  => $request->active,
         ]);
 
         if ($request->filled('password')) {
-            $user->update([
-                'password' => Hash::make($request->password),
-            ]);
+            $user->update(['password' => Hash::make($request->password)]);
         }
 
-        $roles = User::whereIn('role', ['admin', 'superAdmin'])->get();
-        Notification::send($roles, new UserProfileUpdated($user));
-
+        $admins = User::whereIn('role', ['admin', 'superAdmin'])->get();
+        Notification::send($admins, new UserProfileUpdated($user));
 
         return back()->with('success', 'Super Admin updated successfully!');
     }
@@ -89,10 +91,11 @@ class SuperAdminController extends Controller
     {
         abort_if($user->role !== 'superAdmin', 403);
 
+        $name = $user->name;
         $user->delete();
 
-        $roles = User::whereIn('role', ['admin', 'superAdmin'])->get();
-        Notification::send($roles, new UserRemoved($user->name));
+        $admins = User::whereIn('role', ['admin', 'superAdmin'])->get();
+        Notification::send($admins, new UserRemoved($name));
 
         return back()->with('success', 'Super Admin deleted successfully!');
     }

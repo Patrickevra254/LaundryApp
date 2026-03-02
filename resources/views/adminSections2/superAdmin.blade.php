@@ -547,6 +547,20 @@
         icon.classList.toggle('fa-eye-slash', isHidden);
     }
 
+        // Always reuse the same instance — never stack duplicates
+    function getModal(id) {
+        const el = document.getElementById(id);
+        return bootstrap.Modal.getInstance(el) || new bootstrap.Modal(el);
+    }
+
+    // Nuke any orphaned backdrops whenever a modal closes
+    document.addEventListener('hidden.bs.modal', () => {
+        document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style.removeProperty('overflow');
+        document.body.style.removeProperty('padding-right');
+    });
+
     function attachSuperAdminHandlers() {
         document.querySelectorAll('.view-btn').forEach(btn => {
             btn.addEventListener('click', function() {

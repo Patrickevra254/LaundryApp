@@ -33,6 +33,9 @@ class AdminsController extends Controller
             'role' => 'admin',
         ]);
 
+         // Assign Spatie role
+        $user->assignRole('admin');
+
         // notify all admins
         $roles = User::whereIn('role', ['admin', 'superAdmin'])->get();
 
