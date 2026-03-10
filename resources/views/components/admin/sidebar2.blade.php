@@ -262,18 +262,25 @@
                     <i class="fa fa-chevron-down ms-auto chev"></i>
                 </a>
                 <ul class="collapse nav flex-column ms-1 mt-1 gap-1" id="userManagementMenu">
-                    <li><a href="{{ route('superAdmin') }}" class="s-link s-sub" hx-get="{{ route('superAdmin') }}"
-                            hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true"
-                            hx-indicator=".htmx-indicator"><i class="fa fa-user-shield"></i> SuperAdmins</a></li>
-                    <li><a href="{{ route('admin') }}" class="s-link s-sub" hx-get="{{ route('admin') }}"
-                            hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true"
-                            hx-indicator=".htmx-indicator"><i class="fa fa-user-cog"></i> Admins</a></li>
-                    <li><a href="{{ route('customer') }}" class="s-link s-sub" hx-get="{{ route('customer') }}"
-                            hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true"
-                            hx-indicator=".htmx-indicator"><i class="fa fa-users"></i> Customers</a></li>
-                    <li><a href="{{ route('staff') }}" class="s-link s-sub" hx-get="{{ route('staff') }}"
-                            hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true"
-                            hx-indicator=".htmx-indicator"><i class="fa fa-id-badge"></i> Staff</a></li>
+                    @if (auth()->user()->hasAnyRole(['superAdmin']))
+                        <li><a href="{{ route('superAdmin') }}" class="s-link s-sub" hx-get="{{ route('superAdmin') }}"
+                                hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true"
+                                hx-indicator=".htmx-indicator"><i class="fa fa-user-shield"></i> SuperAdmins</a></li>
+                    @endif
+                    @if (auth()->user()->hasAnyRole(['admin', 'superAdmin']))
+                        <li><a href="{{ route('admin') }}" class="s-link s-sub" hx-get="{{ route('admin') }}"
+                                hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true"
+                                hx-indicator=".htmx-indicator"><i class="fa fa-user-cog"></i> Admins</a></li>
+                    @endif
+
+                    @if (auth()->user()->hasAnyRole(['admin', 'superAdmin', 'staff']))
+                        <li><a href="{{ route('customer') }}" class="s-link s-sub" hx-get="{{ route('customer') }}"
+                                hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true"
+                                hx-indicator=".htmx-indicator"><i class="fa fa-users"></i> Customers</a></li>
+                        <li><a href="{{ route('staff') }}" class="s-link s-sub" hx-get="{{ route('staff') }}"
+                                hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true"
+                                hx-indicator=".htmx-indicator"><i class="fa fa-id-badge"></i> Staff</a></li>
+                    @endif
                 </ul>
             </li>
         @endif
@@ -290,9 +297,11 @@
         <li><a href="{{ route('history') }}" class="s-link" hx-get="{{ route('history') }}" hx-target="#content-area"
                 hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator"><i
                     class="fa fa-clock-rotate-left"></i><span>History</span></a></li>
-        <li><a href="{{ route('payments') }}" class="s-link" hx-get="{{ route('payments') }}"
-                hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator"><i
-                    class="fa fa-credit-card"></i><span>Payments</span></a></li>
+        @if (auth()->user()->hasAnyRole(['admin', 'superAdmin']))
+            <li><a href="{{ route('payments') }}" class="s-link" hx-get="{{ route('payments') }}"
+                    hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator"><i
+                        class="fa fa-credit-card"></i><span>Payments</span></a></li>
+        @endif
         <li><a href="{{ route('notifications') }}" class="s-link" hx-get="{{ route('notifications') }}"
                 hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator"><i
                     class="fa fa-bell"></i><span>Notifications</span></a></li>

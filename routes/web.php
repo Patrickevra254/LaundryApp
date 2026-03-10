@@ -17,6 +17,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\OrderController;
 
 // Login page
 // Route::get('/', function () {
@@ -162,6 +163,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/pay', [PaymentController::class, 'redirectToGateway'])->name('payment.redirect');
     Route::get('/payment/callback', [PaymentController::class, 'handleGatewayCallback'])->name('payment.callback');
 
+
+
+
+    // Direct order creation (cash/transfer)
+    Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
+
+    // Record payment against existing order
+    Route::post('/order/{order}/payment', [OrderController::class, 'recordPayment'])->name('order.recordPayment');
+
     // notifications Mark all as read
     Route::post('/notifications/read-all', function () {
         auth()->user()->unreadNotifications->markAsRead();
@@ -176,6 +186,10 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/notifications', [NotificationController::class, 'destroyAll'])
         ->name('notifications.destroyAll');
+
+    Route::get('/order/{order}/complete-payment', [OrderController::class, 'completePayment'])->name('order.completePayment');
+    Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
+    Route::delete('/payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.destroy');
 });
 
 

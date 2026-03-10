@@ -13,6 +13,10 @@ use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\LaundryCategoryController;
 use App\Http\Controllers\LaundryItemController;
 use App\Http\Controllers\LaundryOrderController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
+
+
 
 // Login page
 // Route::get('/', function () {
@@ -149,6 +153,9 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/laundry-orders', [LaundryOrderController::class, 'store'])
             ->name('laundry-orders.store');
+        Route::get('/order/{order}/complete-payment', [OrderController::class, 'completePayment'])->name('order.completePayment');
+        Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
+        Route::delete('/payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.destroy');
     });
 });
 
