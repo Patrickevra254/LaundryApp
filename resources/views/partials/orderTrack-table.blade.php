@@ -123,7 +123,7 @@
                         <span style="font-weight:600;color:#374151;">#{{ $order->id }}</span>
                     </td>
                     <td data-label="Customer">{{ $order->customer?->name ?? '—' }}</td>
-                    <td data-label="Items">{{ $order->items->sum('quantity') }} items</td>
+                    <td data-label="Items">{{ $order->items->sum('quantity') }} item(s)</td>
                     <td data-label="Total">₦{{ number_format($order->total_amount) }}</td>
                     <td data-label="Pickup" style="font-size:.8rem;color:#6b7280;">{{ $order->pickup_date }}</td>
                     <td data-label="Delivery" style="font-size:.8rem;color:#6b7280;">{{ $order->delivery_date }}</td>

@@ -390,8 +390,8 @@
     }
 
     .s-link:hover {
-        background: #eef2ff;
-        color: #4f46e5;
+        background: #ced2dd !important;
+        color: #4f46e5 !important;
     }
 
     .s-link.active {
