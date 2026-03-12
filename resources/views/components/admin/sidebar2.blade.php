@@ -400,6 +400,12 @@
         font-weight: 600;
     }
 
+    .s-link.active:hover {
+        color: #4f46e5;
+        background: #acb6d6;
+        font-weight: 600;
+    }
+
     /* Submenu */
     .s-sub {
         font-size: .82rem;
