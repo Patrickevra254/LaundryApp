@@ -395,8 +395,8 @@
     }
 
     .s-link.active {
-        background: #eef2ff;
-        color: #4f46e5;
+        background: #4f46e5;
+        color: #eef2ff;
         font-weight: 600;
     }
 
@@ -439,3 +439,25 @@
         color: #b91c1c !important;
     }
 </style>
+
+
+<script>
+    function setActiveLink() {
+        let current = window.location.pathname;
+
+        document.querySelectorAll('.s-link').forEach(link => {
+            link.classList.remove('active');
+
+            let href = link.getAttribute('href');
+            if (href && current === new URL(href, window.location.origin).pathname) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    // Run on first load
+    document.addEventListener("DOMContentLoaded", setActiveLink);
+
+    // Run after HTMX loads new content
+    document.body.addEventListener("htmx:afterSwap", setActiveLink);
+</script>
