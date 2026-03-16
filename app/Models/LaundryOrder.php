@@ -1,38 +1,5 @@
 <?php
 
-// namespace App\Models;
-
-// use Illuminate\Database\Eloquent\Model;
-
-// class LaundryOrder extends Model
-// {
-//     protected $fillable = [
-//         'customer_id',
-//         'pickup_address',
-//         'delivery_address',
-//         'pickup_date',
-//         'delivery_date',
-//         'total_items',
-//         'subtotal',
-//         'service_fee',
-//         'total_amount',
-//         'status',
-//         'payment_status',
-//         'created_by',
-//     ];
-
-//     public function items()
-//     {
-//         return $this->hasMany(LaundryOrderItem::class);
-//     }
-
-//     public function customer()
-//     {
-//         return $this->belongsTo(User::class, 'customer_id');
-//     }
-// }
-
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -48,6 +15,8 @@ class LaundryOrder extends Model
         'total_items',
         'subtotal',
         'service_fee',
+        'extra_charges',
+        'extra_charges_note',
         'total_amount',
         'status',
         'payment_method',
@@ -56,6 +25,8 @@ class LaundryOrder extends Model
         'amount_paid',
         'paystack_reference',
         'created_by',
+        'wash_assigned_to',
+        'iron_assigned_to',
     ];
 
     public function items()
@@ -78,7 +49,7 @@ class LaundryOrder extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    // ── Helpers ───
+    // ── Helpers ───────────────────────────────────────────────
 
     public function getBalanceDueAttribute(): int
     {

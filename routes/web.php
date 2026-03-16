@@ -190,6 +190,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/order/{order}/complete-payment', [OrderController::class, 'completePayment'])->name('order.completePayment');
     Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
     Route::delete('/payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.destroy');
+
+    // update order details
+    Route::patch('/orders/{order}/details', [OrderController::class, 'updateDetails'])->name('orders.updateDetails');
 });
 
 
