@@ -722,7 +722,6 @@
         }
     }
 </style> --}}
-
 <div class="container-fluid">
 
     <!-- Page Header -->
@@ -762,15 +761,23 @@
         $balance = max(0, $order->total_amount - $order->amount_paid);
         $payStatus = $order->payment_status ?? 'pending';
         $isPartial = in_array($payStatus, ['pending', 'partial']);
+        $invoiceNo = 'INV-' . str_pad($order->id, 4, '0', STR_PAD_LEFT);
+        $createdByUser = $order->createdBy;
+        $createdBy = $createdByUser?->name ?? '—';
+        $createdByRole = $createdByUser ? ucfirst($createdByUser->role) : null;
     @endphp
+
     <div class="modal fade" id="orderDetailsModal-{{ $order->id }}" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width:700px;">
             <div class="modal-content od-modal">
 
                 <div class="od-modal-header">
                     <div>
-                        <div class="od-order-num">Order #{{ $order->id }}</div>
-                        <div class="od-order-sub">{{ $order->created_at->format('M d, Y') }}</div>
+                        <div class="od-order-num">
+                            {{ $invoiceNo }}
+                            <span class="od-order-id-sub">· Order #{{ $order->id }}</span>
+                        </div>
+                        <div class="od-order-sub">{{ $order->created_at->format('M d, Y · h:i A') }}</div>
                     </div>
                     <button class="od-close" data-bs-dismiss="modal"><i class="fa fa-xmark"></i></button>
                 </div>
@@ -813,10 +820,31 @@
                             <div class="od-info-value">
                                 <span class="pay-badge pay-badge-{{ $payStatus }}">{{ ucfirst($payStatus) }}</span>
                                 @if ($balance > 0)
-                                    <span
-                                        style="font-size:.75rem;color:#dc2626;margin-left:5px;">₦{{ number_format($balance) }}
-                                        due</span>
+                                    <span style="font-size:.75rem;color:#dc2626;margin-left:5px;">
+                                        ₦{{ number_format($balance) }} due
+                                    </span>
                                 @endif
+                            </div>
+                        </div>
+                        {{-- Created By --}}
+                        <div class="od-info-card">
+                            <div class="od-info-label"><i class="fa fa-pen me-1"></i> Created By</div>
+                            <div class="od-info-value">
+                                {{ $createdBy }}
+                                @if ($createdByRole)
+                                    <span class="created-by-role">{{ $createdByRole }}</span>
+                                @endif
+                                <div class="created-by-time">
+                                    <i class="fa fa-clock me-1"></i>
+                                    {{ $order->created_at->format('D, M d Y · h:i A') }}
+                                </div>
+                            </div>
+                        </div>
+                        {{-- Invoice Number --}}
+                        <div class="od-info-card">
+                            <div class="od-info-label"><i class="fa fa-file-invoice me-1"></i> Invoice No.</div>
+                            <div class="od-info-value">
+                                <span class="inv-number-modal">{{ $invoiceNo }}</span>
                             </div>
                         </div>
                     </div>
@@ -890,6 +918,10 @@
                 <div class="od-modal-footer">
                     <button class="n-btn n-btn-secondary" data-bs-dismiss="modal">Close</button>
 
+                    <button class="n-btn n-btn-secondary" onclick="printInvoice({{ $order->id }})">
+                        <i class="fa fa-print me-1"></i> Print Invoice
+                    </button>
+
                     @if (
                         $isPartial &&
                             auth()->user()->hasAnyRole(['admin', 'superAdmin', 'staff']))
@@ -932,7 +964,7 @@
         </div>
     </div>
 
-    {{-- Record Payment Modal (staff only) --}}
+    {{-- Record Payment Modal --}}
     @if (
         $isPartial &&
             auth()->user()->hasAnyRole(['admin', 'superAdmin', 'staff']))
@@ -942,8 +974,8 @@
                     <div class="od-modal-header">
                         <div>
                             <div class="od-order-num">Record Payment</div>
-                            <div class="od-order-sub">Order #{{ $order->id }} — Balance:
-                                ₦{{ number_format($balance) }}</div>
+                            <div class="od-order-sub">{{ $invoiceNo }} — Balance: ₦{{ number_format($balance) }}
+                            </div>
                         </div>
                         <button class="od-close" data-bs-dismiss="modal"><i class="fa fa-xmark"></i></button>
                     </div>
@@ -954,8 +986,9 @@
                                 <label class="p-label">Amount Received (₦)</label>
                                 <input type="number" name="amount" class="p-input" min="1"
                                     max="{{ $balance }}" value="{{ $balance }}" required>
-                                <div style="font-size:.75rem;color:#9ca3af;margin-top:4px;">Max:
-                                    ₦{{ number_format($balance) }}</div>
+                                <div style="font-size:.75rem;color:#9ca3af;margin-top:4px;">
+                                    Max: ₦{{ number_format($balance) }}
+                                </div>
                             </div>
                             <div>
                                 <label class="p-label">Payment Method</label>
@@ -1386,6 +1419,24 @@
         box-shadow: 0 0 0 3px rgba(79, 70, 229, .08);
     }
 
+    .created-by-role {
+        display: inline-block;
+        font-size: .68rem;
+        font-weight: 600;
+        color: #4f46e5;
+        background: #eef2ff;
+        border-radius: 5px;
+        padding: .1em .5em;
+        margin-left: .35rem;
+        vertical-align: middle;
+    }
+
+    .created-by-time {
+        font-size: .72rem;
+        color: #9ca3af;
+        margin-top: 3px;
+    }
+
     @media(max-width:576px) {
         .h-filter {
             flex-direction: column;
@@ -1406,3 +1457,5 @@
         }
     }
 </style>
+
+@include('partials.OrderPrintFunction')

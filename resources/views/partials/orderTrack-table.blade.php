@@ -89,7 +89,7 @@
     <table class="table table-hover align-middle mb-0 mobile-friendly">
         <thead class="table-light">
             <tr>
-                <th>#</th>
+                <th>Invoice #</th>
                 <th>Customer</th>
                 <th>Items</th>
                 <th>Total</th>
@@ -119,8 +119,8 @@
                     };
                 @endphp
                 <tr>
-                    <td data-label="#">
-                        <span style="font-weight:600;color:#374151;">#{{ $order->id }}</span>
+                    <td data-label="Invoice #">
+                        <span class="inv-number">INV-{{ str_pad($order->id, 4, '0', STR_PAD_LEFT) }}</span>
                     </td>
                     <td data-label="Customer">{{ $order->customer?->name ?? '—' }}</td>
                     <td data-label="Items">{{ $order->items->sum('quantity') }} item(s)</td>
@@ -144,10 +144,9 @@
                                 data-bs-target="#orderDetailsModal-{{ $order->id }}" title="View Order">
                                 <i class="fa fa-eye" style="color:#4f46e5;"></i>
                             </button>
-                            {{-- @if (auth()->user()->hasAnyRole(['admin', 'superAdmin'])) --}}
                             @if (auth()->user()->hasAnyRole(['superAdmin']))
                                 <form method="POST" action="{{ route('orders.destroy', $order->id) }}"
-                                    onsubmit="return confirm('Delete Order #{{ $order->id }}? This cannot be undone.')">
+                                    onsubmit="return confirm('Delete Order INV-{{ str_pad($order->id, 4, '0', STR_PAD_LEFT) }}? This cannot be undone.')">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="n-icon-btn danger" title="Delete Order">
                                         <i class="fa fa-trash" style="color:#dc2626;"></i>
@@ -174,6 +173,17 @@
 </div>
 
 <style>
+    .inv-number {
+        font-weight: 700;
+        color: #4f46e5;
+        font-size: .82rem;
+        font-family: monospace;
+        background: #eef2ff;
+        padding: .2em .55em;
+        border-radius: 5px;
+        letter-spacing: .03em;
+    }
+
     .pay-badge {
         font-size: .72rem;
         font-weight: 700;
@@ -181,82 +191,38 @@
         border-radius: 6px;
     }
 
-    .pay-badge-paid {
-        background: #ecfdf5;
-        color: #065f46;
-    }
-
-    .pay-badge-partial {
-        background: #fff7ed;
-        color: #c2410c;
-        border: 1px solid #fed7aa;
-    }
-
-    .pay-badge-pending {
-        background: #fffbeb;
-        color: #92400e;
-    }
+    .pay-badge-paid    { background: #ecfdf5; color: #065f46; }
+    .pay-badge-partial { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+    .pay-badge-pending { background: #fffbeb; color: #92400e; }
 
     .n-icon-btn {
-        width: 28px;
-        height: 28px;
-        border-radius: 7px;
-        border: none;
-        background: #f3f4f6;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: .75rem;
-        cursor: pointer;
+        width: 28px; height: 28px; border-radius: 7px; border: none;
+        background: #f3f4f6; display: inline-flex; align-items: center;
+        justify-content: center; font-size: .75rem; cursor: pointer;
         transition: background .15s;
     }
-
-    .n-icon-btn:hover {
-        background: #eef2ff;
-    }
-
-    .n-icon-btn.danger:hover {
-        background: #fee2e2;
-    }
+    .n-icon-btn:hover         { background: #eef2ff; }
+    .n-icon-btn.danger:hover  { background: #fee2e2; }
 
     /* Mobile stacking */
     @media (max-width: 768px) {
-        .mobile-friendly thead {
-            display: none;
-        }
-
+        .mobile-friendly thead { display: none; }
         .mobile-friendly tr {
-            display: block;
-            border: 1px solid #f0f0f8;
-            border-radius: 12px;
-            margin-bottom: .75rem;
-            padding: .5rem .75rem;
-            background: #fff;
+            display: block; border: 1px solid #f0f0f8;
+            border-radius: 12px; margin-bottom: .75rem;
+            padding: .5rem .75rem; background: #fff;
         }
-
         .mobile-friendly td {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: .4rem 0;
-            border: none;
-            border-bottom: 1px solid #f5f5fb;
-            font-size: .83rem;
+            display: flex; justify-content: space-between;
+            align-items: center; padding: .4rem 0;
+            border: none; border-bottom: 1px solid #f5f5fb; font-size: .83rem;
         }
-
-        .mobile-friendly td:last-child {
-            border-bottom: none;
-        }
-
+        .mobile-friendly td:last-child { border-bottom: none; }
         .mobile-friendly td::before {
             content: attr(data-label);
-            font-size: .72rem;
-            font-weight: 600;
-            color: #9ca3af;
-            text-transform: uppercase;
-            letter-spacing: .04em;
-            flex-shrink: 0;
-            margin-right: .75rem;
+            font-size: .72rem; font-weight: 600; color: #9ca3af;
+            text-transform: uppercase; letter-spacing: .04em;
+            flex-shrink: 0; margin-right: .75rem;
         }
     }
 </style>

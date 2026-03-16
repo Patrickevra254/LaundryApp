@@ -101,7 +101,7 @@ class AdminController extends Controller
 
     public function history(Request $request)
     {
-        $query = LaundryOrder::with(['customer', 'items'])
+        $query = LaundryOrder::with(['customer', 'items', 'createdBy'])
             ->whereIn('status', ['completed', 'delivered']);
 
         // Restrict for customers
@@ -202,7 +202,7 @@ class AdminController extends Controller
 
     public function orderTrack(Request $request)
     {
-        $query = LaundryOrder::with(['customer', 'items']);
+        $query = LaundryOrder::with(['customer', 'items', 'createdBy']);
 
         // Restrict for customers
         if (auth()->user()->role === 'customer') {
