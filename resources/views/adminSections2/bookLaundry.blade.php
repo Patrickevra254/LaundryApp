@@ -1371,7 +1371,7 @@
                     <table class="table align-middle mb-0 book-table">
                         <thead>
                             <tr>
-                                <th>Item</th>
+                                <th>Item Description</th>
                                 <th>Service</th>
                                 <th>Price</th>
                                 <th>Qty</th>

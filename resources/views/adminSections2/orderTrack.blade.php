@@ -764,7 +764,7 @@
         $isPartial = in_array($payStatus, ['pending', 'partial']);
     @endphp
     <div class="modal fade" id="orderDetailsModal-{{ $order->id }}" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width:520px;">
+        <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width:700px;">
             <div class="modal-content od-modal">
 
                 <div class="od-modal-header">
@@ -845,7 +845,7 @@
                         <table class="table od-table align-middle mb-0">
                             <thead>
                                 <tr>
-                                    <th>Item</th>
+                                    <th>Item Description</th>
                                     <th>Service</th>
                                     <th>Price</th>
                                     <th>Qty</th>
@@ -890,12 +890,11 @@
                 <div class="od-modal-footer">
                     <button class="n-btn n-btn-secondary" data-bs-dismiss="modal">Close</button>
 
-                    @if ($isPartial &&
-    auth()->user()->hasAnyRole(['admin', 'superAdmin', 'staff']))
-                        <button class="n-btn n-btn-primary"
-                            data-bs-toggle="modal"
-                            data-bs-target="#recordPaymentModal-{{ $order->id }}"
-                            data-bs-dismiss="modal">
+                    @if (
+                        $isPartial &&
+                            auth()->user()->hasAnyRole(['admin', 'superAdmin', 'staff']))
+                        <button class="n-btn n-btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#recordPaymentModal-{{ $order->id }}" data-bs-dismiss="modal">
                             <i class="fa fa-plus me-1"></i> Record Payment
                         </button>
                     @endif
@@ -934,15 +933,17 @@
     </div>
 
     {{-- Record Payment Modal (staff only) --}}
-    @if ($isPartial &&
-    auth()->user()->hasAnyRole(['admin', 'superAdmin', 'staff']))
+    @if (
+        $isPartial &&
+            auth()->user()->hasAnyRole(['admin', 'superAdmin', 'staff']))
         <div class="modal fade" id="recordPaymentModal-{{ $order->id }}" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
                 <div class="modal-content od-modal">
                     <div class="od-modal-header">
                         <div>
                             <div class="od-order-num">Record Payment</div>
-                            <div class="od-order-sub">Order #{{ $order->id }} — Balance: ₦{{ number_format($balance) }}</div>
+                            <div class="od-order-sub">Order #{{ $order->id }} — Balance:
+                                ₦{{ number_format($balance) }}</div>
                         </div>
                         <button class="od-close" data-bs-dismiss="modal"><i class="fa fa-xmark"></i></button>
                     </div>
@@ -953,7 +954,8 @@
                                 <label class="p-label">Amount Received (₦)</label>
                                 <input type="number" name="amount" class="p-input" min="1"
                                     max="{{ $balance }}" value="{{ $balance }}" required>
-                                <div style="font-size:.75rem;color:#9ca3af;margin-top:4px;">Max: ₦{{ number_format($balance) }}</div>
+                                <div style="font-size:.75rem;color:#9ca3af;margin-top:4px;">Max:
+                                    ₦{{ number_format($balance) }}</div>
                             </div>
                             <div>
                                 <label class="p-label">Payment Method</label>
@@ -964,7 +966,8 @@
                             </div>
                         </div>
                         <div class="od-modal-footer">
-                            <button type="button" class="n-btn n-btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="n-btn n-btn-secondary"
+                                data-bs-dismiss="modal">Cancel</button>
                             <button type="submit" class="n-btn n-btn-primary">
                                 <i class="fa fa-check me-1"></i> Record Payment
                             </button>

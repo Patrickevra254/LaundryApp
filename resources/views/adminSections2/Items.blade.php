@@ -503,7 +503,7 @@
                             @csrf
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label class="p-label">Item Name</label>
+                                    <label class="p-label">Item Description</label>
                                     <input type="text" name="name" class="p-input" required>
                                 </div>
                                 <div class="col-md-6">
@@ -864,7 +864,7 @@
                             document.querySelectorAll('#editItemModal input[name="icon"]').forEach(r =>
                                 r.checked = (r.value === item.icon));
                             document.getElementById('editItemForm').action =
-                            `/laundry-items/${item.id}`;
+                                `/laundry-items/${item.id}`;
                             new bootstrap.Modal(document.getElementById('editItemModal')).show();
                         });
                 });
