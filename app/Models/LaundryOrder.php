@@ -27,6 +27,7 @@ class LaundryOrder extends Model
         'created_by',
         'wash_assigned_to',
         'iron_assigned_to',
+        'branch_id',
     ];
 
     public function items()
@@ -47,6 +48,11 @@ class LaundryOrder extends Model
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
     }
 
     // ── Helpers ───────────────────────────────────────────────

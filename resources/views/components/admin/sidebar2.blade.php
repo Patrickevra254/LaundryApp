@@ -249,8 +249,9 @@
 
     <ul class="nav flex-column mb-auto gap-1 mt-2">
 
-        <li><a href="{{ route('admin-dashboard') }}" class="s-link" hx-target="#content-area" hx-swap="innerHTML"
-                hx-push-url="true" hx-indicator=".htmx-indicator"><i class="fa fa-home"></i><span>Dashboard</span></a>
+        <li><a href="{{ route('admin-dashboard') }}" class="s-link" hx-get="{{ route('admin-dashboard') }}"
+                hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator"><i
+                    class="fa fa-home"></i><span>Dashboard</span></a>
         </li>
 
 
@@ -291,6 +292,11 @@
         <li><a href="{{ route('bookLaundry') }}" class="s-link" hx-get="{{ route('bookLaundry') }}"
                 hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator"><i
                     class="fa fa-calendar-plus"></i><span>Book Laundry</span></a></li>
+        @if (auth()->user()->hasAnyRole(['superAdmin']))
+            <li><a href="{{ route('branches') }}" class="s-link" hx-get="{{ route('branches') }}"
+                    hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator">
+                    <i class="fa fa-building"></i><span>Branches</span></a></li>
+        @endif
         <li><a href="{{ route('orderTrack') }}" class="s-link" hx-get="{{ route('orderTrack') }}"
                 hx-target="#content-area" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator"><i
                     class="fa fa-route"></i><span>Orders & Tracking</span></a></li>

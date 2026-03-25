@@ -3428,7 +3428,7 @@
 
     // ── Collect & validate ───────────────────────────────────────────────────────
 
-    function collectFields() {
+    async function collectFields() {
         const customerId    = document.getElementById('field_customer_id')?.value;
         const customerEmail = document.getElementById('field_customer_email')?.value;
         const pickupAddr    = document.getElementById('field_pickup_address')?.value?.trim();
@@ -3436,37 +3436,76 @@
         const pickupDate    = document.getElementById('field_pickup_date')?.value;
         const deliveryDate  = document.getElementById('field_delivery_date')?.value;
 
-        if (!customerId)   { alert('Please select a customer.');        return null; }
-        if (!pickupAddr)   { alert('Please enter a pickup address.');   return null; }
-        if (!deliveryAddr) { alert('Please enter a delivery address.'); return null; }
-        if (!pickupDate)   { alert('Please select a pickup date.');     return null; }
-        if (!deliveryDate) { alert('Please select a delivery date.');   return null; }
+        const warn = (msg) => Swal.fire({
+            icon: 'warning',
+            title: 'Required Field',
+            text: msg,
+            confirmButtonColor: '#4f46e5',
+            confirmButtonText: 'Got it',
+        });
+
+        if (!customerId)   { await warn('Please select a customer.');        return null; }
+        if (!pickupAddr)   { await warn('Please enter a pickup address.');   return null; }
+        if (!deliveryAddr) { await warn('Please enter a delivery address.'); return null; }
+        if (!pickupDate)   { await warn('Please select a pickup date.');     return null; }
+        if (!deliveryDate) { await warn('Please select a delivery date.');   return null; }
+
+        // Washer & ironer required for admin and staff
+        @if(in_array(auth()->user()->role, ['admin', 'staff']))
+        const washStaffVal = document.getElementById('field_wash_assigned_to')?.value?.trim();
+        const ironStaffVal = document.getElementById('field_iron_assigned_to')?.value?.trim();
+        if (!washStaffVal) { await warn('Please assign a washer for this order.');  return null; }
+        if (!ironStaffVal) { await warn('Please assign an ironer for this order.'); return null; }
+        @endif
 
         const items = [];
+        const itemsWithoutDetails = [];
+
         document.getElementById('itemsTableBody')?.querySelectorAll('tr').forEach(row => {
             const itemId = row.querySelector('.item-name')?.value;
             if (!itemId) return;
-            const rowId  = row.dataset.rowId;
+            const rowId   = row.dataset.rowId;
             const details = itemDetails[rowId] || {};
+
+            if (!details.description && !details.observations && !details.requirements) {
+                const itemName = row.querySelector('.item-name')?.selectedOptions[0]?.text || 'Item';
+                itemsWithoutDetails.push(itemName);
+            }
+
             items.push({
                 item_id:      itemId,
                 service_type: row.querySelector('.item-service')?.value,
                 price:        row.querySelector('.item-price')?.value,
                 quantity:     row.querySelector('.item-qty')?.value,
-                // care details
                 description:  details.description  || '',
                 observations: details.observations || '',
                 requirements: details.requirements || '',
-                starch:       details.starch       || 'medium',
-                heat:         details.heat         || 'medium',
+                starch:       details.starch       || 'none',
+                heat:         details.heat         || 'low',
                 finish:       details.finish       || 'folded',
                 extra_charge: details.extraCharge  || 0,
             });
         });
 
         if (items.length === 0) {
-            alert('No items available. Please add items in the Items page before booking.');
+            await warn('No items available. Please add items in the Items page before booking.');
             return null;
+        }
+
+        // Soft warning — confirm if any items have no care details
+        if (itemsWithoutDetails.length > 0) {
+            const names = itemsWithoutDetails.join(', ');
+            const result = await Swal.fire({
+                icon: 'question',
+                title: 'Care Details Missing',
+                html: `Care details not filled for: <strong>${names}</strong>.<br><br>Do you want to continue without filling them in?`,
+                showCancelButton: true,
+                confirmButtonColor: '#4f46e5',
+                cancelButtonColor: '#e5e7eb',
+                confirmButtonText: 'Yes, continue',
+                cancelButtonText: 'Go back & fill details',
+            });
+            if (!result.isConfirmed) return null;
         }
 
         return { customerId, customerEmail, pickupAddr, deliveryAddr, pickupDate, deliveryDate, items };
@@ -3474,8 +3513,8 @@
 
     // ── Submit ───────────────────────────────────────────────────────────────────
 
-    function handleSubmit() {
-        const fields = collectFields();
+    async function handleSubmit() {
+        const fields = await collectFields();
         if (!fields) return;
 
         document.getElementById('itemsTableBody')?.querySelectorAll('tr').forEach(row => updateRowPrice(row));

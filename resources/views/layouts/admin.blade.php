@@ -304,6 +304,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="" id="body">
@@ -356,7 +357,11 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('assets/js/custom.js') }}"></script>
+    {{-- <script src="https://unpkg.com/htmx.org@1.9.10"></script> --}}
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script>
+        htmx.config.allowScriptTags = true;
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
     {{-- ── Toast system ──────────────────────────────────────────── --}}
@@ -394,7 +399,6 @@
             animation: toastOut .3s ease forwards;
         }
 
-        /* progress bar */
         .toast-item::after {
             content: '';
             position: absolute;
@@ -545,7 +549,6 @@
             setTimeout(() => toast.remove(), 300);
         }
 
-        // Fire toasts from Laravel session data
         @if (session('success'))
             showToast('success', 'Success', @json(session('success')));
         @endif
@@ -567,12 +570,10 @@
             const contentArea = document.getElementById('content-area');
             const loader = document.querySelector('.htmx-indicator');
 
-            // Ensure sidebar visible on tablet
             if (window.innerWidth >= 768 && window.innerWidth < 992) {
                 sidebar?.classList.add('show');
             }
 
-            // Sidebar toggle
             toggleBtn?.addEventListener('click', () => {
                 if (window.innerWidth >= 767) {
                     sidebar?.classList.toggle('collapsed');
@@ -581,7 +582,6 @@
                 }
             });
 
-            // Initial loader state
             if (contentArea && contentArea.innerHTML.trim() !== '') {
                 loader.style.display = 'none';
                 contentArea.classList.remove('d-none');
@@ -590,7 +590,6 @@
                 contentArea.classList.add('d-none');
             }
 
-            // Redirect to login if session expires
             document.body.addEventListener('htmx:beforeSwap', function(event) {
                 if (event.detail.xhr.responseURL?.includes('/login')) {
                     event.detail.shouldSwap = false;
@@ -599,7 +598,6 @@
                 }
             });
 
-            // 401 handler
             document.body.addEventListener('htmx:responseError', function(event) {
                 const xhr = event.detail.xhr;
                 if (xhr.status === 401) {
@@ -613,7 +611,6 @@
                 }
             });
 
-            // After swap — hide loader, check for login redirect
             document.body.addEventListener('htmx:afterSwap', function(event) {
                 if (event.detail.target.id === 'content-area') {
                     const content = event.detail.target.innerHTML.toLowerCase();
@@ -627,7 +624,6 @@
                 }
             });
 
-            // Before request — show loader
             document.body.addEventListener('htmx:beforeRequest', function(event) {
                 if (event.detail.target.id === 'content-area') {
                     contentArea.innerHTML = '';

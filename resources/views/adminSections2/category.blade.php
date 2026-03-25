@@ -8,7 +8,7 @@
         </div>
 
         {{-- ADMIN ONLY ACTIONS --}}
-        @if (auth()->user()->hasAnyRole(['admin', 'superAdmin', 'staff']))
+        @if (auth()->user()->hasAnyRole([ 'superAdmin']))
             <div class="d-flex gap-2">
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
                     <i class="fa fa-plus me-1"></i> Add Category
@@ -44,7 +44,7 @@
     </div>
 
     {{-- ================= ADMIN MODALS ONLY ================= --}}
-    @if (auth()->user()->hasAnyRole(['admin', 'superAdmin', 'staff']))
+    @if (auth()->user()->hasAnyRole([ 'superAdmin']))
         {{-- ADD CATEGORY MODAL --}}
         <div class="modal fade" id="addCategoryModal" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered modal-sm">

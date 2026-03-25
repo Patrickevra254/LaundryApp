@@ -11,7 +11,6 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasRoles;
 
-    // IMPORTANT for Spatie Permission
     protected $guard_name = 'web';
 
     protected $fillable = [
@@ -22,6 +21,7 @@ class User extends Authenticatable
         'role',
         'address',
         'active',
+        'branch_id',
     ];
 
     protected $hidden = [
@@ -33,7 +33,19 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
         ];
+    }
+
+    // ── Relationships ─────────────────────────────────────────
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
+    public function laundryOrders()
+    {
+        return $this->hasMany(LaundryOrder::class, 'created_by');
     }
 }

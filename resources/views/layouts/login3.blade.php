@@ -1692,12 +1692,12 @@
 
             <div class="brand-logo">
                 <div class="logo-mark"><i class="fa fa-shirt"></i></div>
-                LaundryPro
+                Tobeel Laundry Services And Logistics
             </div>
 
             <div class="brand-hero">
                 <h2>Clean clothes,<br>seamless operations.</h2>
-                <p>Manage orders, track payments, and delight your customers — all from one powerful dashboard.</p>
+                <p>Manage orders, track payments, and delight your customers, all from one powerful laundry System.</p>
 
                 <div class="mock-card">
                     <div class="mock-card-header">
@@ -1754,7 +1754,7 @@
                 <!-- ── LOGIN ── -->
                 <div id="loginForm">
                     <div class="form-eyebrow">Welcome back</div>
-                    <h1 class="form-heading">Sign in to<br>LaundryPro</h1>
+                    <h1 class="form-heading">Sign in to<br>Tolbeel Laundry Portal</h1>
                     <p class="form-sub">Enter your credentials to continue</p>
 
                     <form method="POST" action="{{ route('login.store') }}">

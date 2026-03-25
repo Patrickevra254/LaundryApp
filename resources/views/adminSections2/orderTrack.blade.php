@@ -476,6 +476,7 @@
         }
     }
 </style> --}}
+
 <div class="container-fluid">
 
     <!-- Page Header -->
@@ -549,25 +550,44 @@
                     @endif
 
                     <div class="od-info-grid mb-4">
+
                         <div class="od-info-card">
                             <div class="od-info-label"><i class="fa fa-user me-1"></i> Customer</div>
                             <div class="od-info-value">{{ $order->customer?->name }}</div>
+                        </div>
+                        <div class="od-info-card">
+                            <div class="od-info-label"><i class="fa fa-file-invoice me-1"></i> Invoice No.</div>
+                            <div class="od-info-value">
+                                <span class="inv-number-modal">{{ $invoiceNo }}</span>
+                            </div>
                         </div>
                         <div class="od-info-card">
                             <div class="od-info-label"><i class="fa fa-phone me-1"></i> Phone</div>
                             <div class="od-info-value">{{ $order->customer?->phone }}</div>
                         </div>
                         <div class="od-info-card">
-                            <div class="od-info-label"><i class="fa fa-location-dot me-1"></i> Pickup</div>
+                            <div class="od-info-label"><i class="fa fa-location-dot me-1"></i> Pickup Address</div>
                             <div class="od-info-value">{{ $order->pickup_address }}</div>
                         </div>
                         <div class="od-info-card">
-                            <div class="od-info-label"><i class="fa fa-truck me-1"></i> Delivery</div>
+                            <div class="od-info-label"><i class="fa fa-truck me-1"></i> Delivery Address</div>
                             <div class="od-info-value">{{ $order->delivery_address }}</div>
+                        </div>
+                        <div class="od-info-card">
+                            <div class="od-info-label"><i class="fa fa-truck me-1"></i> Pickup Date</div>
+                            <div class="od-info-value">{{ $order->pickup_date }}</div>
+                        </div>
+                        <div class="od-info-card">
+                            <div class="od-info-label"><i class="fa fa-truck me-1"></i> Delivery Date</div>
+                            <div class="od-info-value">{{ $order->delivery_date }}</div>
                         </div>
                         <div class="od-info-card">
                             <div class="od-info-label"><i class="fa fa-circle-dot me-1"></i> Order Status</div>
                             <div class="od-info-value">{{ ucfirst($order->status) }}</div>
+                        </div>
+                        <div class="od-info-card">
+                            <div class="od-info-label"><i class="fa fa-building me-1"></i> Branch</div>
+                            <div class="od-info-value">{{ $order->branch?->name ?? '—' }}</div>
                         </div>
                         <div class="od-info-card">
                             <div class="od-info-label"><i class="fa fa-credit-card me-1"></i> Payment</div>
@@ -593,12 +613,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="od-info-card">
+                        {{-- <div class="od-info-card">
                             <div class="od-info-label"><i class="fa fa-file-invoice me-1"></i> Invoice No.</div>
                             <div class="od-info-value">
                                 <span class="inv-number-modal">{{ $invoiceNo }}</span>
                             </div>
-                        </div>
+                        </div> --}}
+                        
                         {{-- Staff Assignment (only shown if set) --}}
                         @if ($order->wash_assigned_to || $order->iron_assigned_to)
                             <div class="od-info-card">
@@ -1052,7 +1073,8 @@
                         Fee</span><span>₦{{ number_format($order->service_fee) }}</span></div>
                 <div class="inv-totals-divider"></div>
                 <div class="inv-totals-row grand">
-                    <span>Total</span><span>₦{{ number_format($order->total_amount) }}</span></div>
+                    <span>Total</span><span>₦{{ number_format($order->total_amount) }}</span>
+                </div>
                 <div class="inv-totals-row paid"><span>Amount
                         Paid</span><span>₦{{ number_format($order->amount_paid) }}</span></div>
                 <div class="inv-totals-row {{ $balance > 0 ? 'balance-due' : 'balance-clear' }}">
@@ -1062,7 +1084,8 @@
             <div class="inv-divider"></div>
             <div class="inv-footer">
                 <p>Thank you for choosing LaundryPro. For inquiries, please reference
-                    <strong>{{ $invoiceNo }}</strong>.</p>
+                    <strong>{{ $invoiceNo }}</strong>.
+                </p>
                 <p class="inv-footer-small">Printed on {{ now()->format('M d, Y · h:i A') }}</p>
             </div>
         </div>
@@ -1701,7 +1724,8 @@
             .inv-footer p { font-size:.8rem; color:#6b7280; margin-bottom:4px; }
             .inv-footer-small { font-size:.72rem; color:#9ca3af; }
             @media print { body { padding:20px; } @page { margin:1cm; } }
-        </style></head><body>${content.innerHTML}<script>window.onload=function(){window.print();}<\/script></body></html>`);
+        </style></head><body>${content.innerHTML}<script>window.onload=function(){window.print();}<\/script></body></html>`
+        );
         win.document.close();
     }
 

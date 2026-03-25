@@ -366,7 +366,7 @@
             <p class="notifs-sub mb-0">Manage types of clothes the shop can wash</p>
         </div>
 
-        @if (auth()->user()->hasAnyRole(['admin', 'superAdmin', 'staff']))
+        @if (auth()->user()->hasAnyRole(['superAdmin']))
             <div class="d-flex gap-2">
                 <button class="n-btn n-btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
                     <i class="fa fa-plus"></i> Add Item

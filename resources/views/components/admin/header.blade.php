@@ -231,7 +231,7 @@
             <div class="header-brand-icon">
                 <i class="fa fa-tshirt"></i>
             </div>
-            <h1 class="h6 mb-0 fw-bold text-dark header-title">LaundryPro</h1>
+            <h1 class="h6 mb-0 fw-bold text-dark header-title">Tolbeel</h1>
         </div>
     </div>
 
@@ -357,7 +357,8 @@
     }
 
     .header-title {
-        font-size: 0.95rem;
+        /* font-size: 0.95rem; */
+        font-size: 1rem;
         letter-spacing: -0.01em;
     }
 
