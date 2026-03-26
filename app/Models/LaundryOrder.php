@@ -27,6 +27,11 @@ class LaundryOrder extends Model
         'created_by',
         'wash_assigned_to',
         'iron_assigned_to',
+        'packed_by',
+        'reviewed_by',
+        'collector_name',
+        'collector_phone',
+        'collection_date',
         'branch_id',
     ];
 

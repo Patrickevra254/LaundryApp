@@ -17,9 +17,9 @@ class LaundryItem extends Model
         'washing_price',
         'ironing_price',
         'wash_and_iron_price',
+        'due_days',
     ];
 
-    // Relationship: An item belongs to a category
     public function category()
     {
         return $this->belongsTo(LaundryCategory::class, 'category_id');

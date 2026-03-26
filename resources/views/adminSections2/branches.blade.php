@@ -740,17 +740,6 @@
         </button>
     </div>
 
-    @if(session('success'))
-        <div class="alert-flash alert-flash-success mb-3">
-            <i class="fa fa-circle-check me-2"></i>{{ session('success') }}
-        </div>
-    @endif
-    @if(session('error'))
-        <div class="alert-flash alert-flash-error mb-3">
-            <i class="fa fa-circle-xmark me-2"></i>{{ session('error') }}
-        </div>
-    @endif
-
     <!-- Branches Table -->
     <div class="h-table-card">
         <table class="table table-hover align-middle mb-0 mobile-friendly">
