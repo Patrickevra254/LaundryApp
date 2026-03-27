@@ -1238,19 +1238,19 @@
                 </div>
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="p-label">Pickup Address</label>
+                        <label class="p-label">Drop off/Pickup Address</label>
                         <textarea id="field_pickup_address" class="p-input" rows="2" placeholder="Enter pickup address"></textarea>
                     </div>
                     <div class="col-md-6">
-                        <label class="p-label">Delivery Address</label>
+                        <label class="p-label">Collection/Delivery Address</label>
                         <textarea id="field_delivery_address" class="p-input" rows="2" placeholder="Enter delivery address"></textarea>
                     </div>
                     <div class="col-md-6">
-                        <label class="p-label">Pickup Date</label>
+                        <label class="p-label">Drop off/Pickup Date</label>
                         <input type="date" id="field_pickup_date" class="p-input">
                     </div>
                     <div class="col-md-6">
-                        <label class="p-label">Delivery Date</label>
+                        <label class="p-label">Due Date</label>
                         <input type="date" id="field_delivery_date" class="p-input">
                     </div>
                 </div>
@@ -2151,6 +2151,9 @@
     }
 
     // Auto-calculate delivery date based on highest due_days among all selected items
+
+    // Auto-calculate delivery date based on highest due_days among all selected items
+    // Sundays are skipped — work runs Monday to Saturday only
     function autoCalculateDeliveryDate() {
         const pickupInput = document.getElementById('field_pickup_date');
         const deliveryInput = document.getElementById('field_delivery_date');
@@ -2165,7 +2168,21 @@
 
         if (maxDueDays > 0) {
             const pickup = new Date(pickupInput.value);
-            pickup.setDate(pickup.getDate() + maxDueDays);
+            let daysAdded = 0;
+
+            // Walk forward day by day, skipping Sundays (0 = Sunday)
+            while (daysAdded < maxDueDays) {
+                pickup.setDate(pickup.getDate() + 1);
+                if (pickup.getDay() !== 0) { // not Sunday
+                    daysAdded++;
+                }
+            }
+
+            // If the final date lands on a Sunday, push to Monday
+            if (pickup.getDay() === 0) {
+                pickup.setDate(pickup.getDate() + 1);
+            }
+
             const yyyy = pickup.getFullYear();
             const mm = String(pickup.getMonth() + 1).padStart(2, '0');
             const dd = String(pickup.getDate()).padStart(2, '0');

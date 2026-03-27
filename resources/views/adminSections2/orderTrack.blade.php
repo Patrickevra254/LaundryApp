@@ -1341,19 +1341,19 @@
                             <div class="od-info-value">{{ $order->customer?->phone }}</div>
                         </div>
                         <div class="od-info-card">
-                            <div class="od-info-label"><i class="fa fa-location-dot me-1"></i> Pickup</div>
+                            <div class="od-info-label"><i class="fa fa-location-dot me-1"></i>Pickup/Drop off</div>
                             <div class="od-info-value">{{ $order->pickup_address }}</div>
                         </div>
                         <div class="od-info-card">
-                            <div class="od-info-label"><i class="fa fa-truck me-1"></i> Delivery</div>
+                            <div class="od-info-label"><i class="fa fa-truck me-1"></i>Collection/Delivery</div>
                             <div class="od-info-value">{{ $order->delivery_address }}</div>
                         </div>
                         <div class="od-info-card">
-                            <div class="od-info-label"><i class="fa fa-truck me-1"></i> Pickup Date</div>
+                            <div class="od-info-label"><i class="fa fa-truck me-1"></i> Pickup/Drop off Date</div>
                             <div class="od-info-value">{{ $order->pickup_date }}</div>
                         </div>
                         <div class="od-info-card">
-                            <div class="od-info-label"><i class="fa fa-truck me-1"></i> Delivery Date</div>
+                            <div class="od-info-label"><i class="fa fa-truck me-1"></i> Due Date</div>
                             <div class="od-info-value">{{ $order->delivery_date }}</div>
                         </div>
                         <div class="od-info-card">
@@ -1863,7 +1863,7 @@
                 <div class="inv-brand">
                     <div class="inv-brand-icon">🧺</div>
                     <div>
-                        <div class="inv-brand-name">LaundryPro</div>
+                        <div class="inv-brand-name">Tolbeel </div>
                         <div class="inv-brand-tag">Professional Laundry Services</div>
                     </div>
                 </div>
@@ -1884,8 +1884,9 @@
                     <div class="inv-section-label">Pickup & Delivery</div>
                     <div class="inv-info-detail"><strong>From:</strong> {{ $order->pickup_address }}</div>
                     <div class="inv-info-detail"><strong>To:</strong> {{ $order->delivery_address }}</div>
-                    <div class="inv-info-detail"><strong>Pickup:</strong> {{ $order->pickup_date }}</div>
-                    <div class="inv-info-detail"><strong>Delivery:</strong> {{ $order->delivery_date }}</div>
+                    <div class="inv-info-detail"><strong>Pickup/Drop off date:</strong> {{ $order->pickup_date }}
+                    </div>
+                    <div class="inv-info-detail"><strong>Due Date:</strong> {{ $order->delivery_date }}</div>
                 </div>
                 <div class="inv-info-col">
                     <div class="inv-section-label">Order Info</div>
