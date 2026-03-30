@@ -1305,7 +1305,7 @@
         $createdByRole = $createdByUser ? ucfirst($createdByUser->role) : null;
     @endphp
 
-    {{-- ── Order Detail Modal ────────────────────────────────── --}}
+    {{-- ── Order Detail View Modal ────────────────────────────────── --}}
     <div class="modal fade" id="orderDetailsModal-{{ $order->id }}" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width:700px;">
             <div class="modal-content od-modal">
@@ -1425,17 +1425,17 @@
                             </div>
                             <div class="od-info-card">
                                 <div class="od-info-label"><i class="fa fa-fire me-1" style="color:#f59e0b;"></i>
-                                    Collector's Name</div>
+                                    Collector's/Deliverer's Name</div>
                                 <div class="od-info-value">{{ $order->collector_name ?: '—' }}</div>
                             </div>
                             <div class="od-info-card">
                                 <div class="od-info-label"><i class="fa fa-fire me-1" style="color:#f59e0b;"></i>
-                                    Collector's Phone Number</div>
+                                    Collector's/Deliverer's Phone Number</div>
                                 <div class="od-info-value">{{ $order->collector_phone ?: '—' }}</div>
                             </div>
                             <div class="od-info-card">
                                 <div class="od-info-label"><i class="fa fa-fire me-1" style="color:#f59e0b;"></i>
-                                    Collection Date</div>
+                                    Collection/Delivery Date</div>
                                 <div class="od-info-value">{{ $order->collection_date ?: '—' }}</div>
                             </div>
                         @endif
@@ -1762,21 +1762,21 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="p-label">
-                                        <i class="fa fa-user me-1"></i> Collector Name
+                                        <i class="fa fa-user me-1"></i> Collector/Deliverer's Name
                                     </label>
                                     <input type="text" name="collector_name" class="p-input"
                                         value="{{ $order->collector_name }}" placeholder="Name of person collecting">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="p-label">
-                                        <i class="fa fa-phone me-1"></i> Collector Phone
+                                        <i class="fa fa-phone me-1"></i> Collector/Deliverer's Phone
                                     </label>
                                     <input type="tel" name="collector_phone" class="p-input"
                                         value="{{ $order->collector_phone }}" placeholder="Phone number">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="p-label">
-                                        <i class="fa fa-calendar me-1"></i> Collection Date
+                                        <i class="fa fa-calendar me-1"></i> Collection/Delivery Date
                                     </label>
                                     <input type="date" name="collection_date" class="p-input"
                                         value="{{ $order->collection_date }}">
