@@ -12,19 +12,34 @@ use Illuminate\Support\Facades\Notification;
 
 class CustomerController extends Controller
 {
+    // real time population for customer by name or phone
     public function searchCustomers(Request $request)
     {
-        $query = $request->get('q');
+        $q = trim($request->q);
+
+        if (!$q) {
+            return response()->json([]);
+        }
+
+        // Normalize phone input — handle +234 or 234 prefix
+        $normalized = preg_replace('/\D/', '', $q);
+        if (str_starts_with($normalized, '234')) {
+            $normalized = '0' . substr($normalized, 3);
+        }
 
         $customers = User::where('role', 'customer')
-            ->where(function ($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                    ->orWhere('phone', 'like', "%{$query}%");
-            })
-            ->limit(10)
-            ->get();
+            ->where(function ($query) use ($q, $normalized) {
 
-        return view('partials.customerOptions', compact('customers'));
+                if (!empty($normalized)) {
+                    $query->where('phone', 'like', '%' . $normalized . '%');
+                } else {
+                    $query->where('name', 'like', '%' . $q . '%');
+                }
+            })
+            ->limit(8)
+            ->get(['id', 'name', 'phone', 'email']);
+
+        return response()->json($customers);
     }
 
     public function storeCustomer(Request $request)
@@ -33,7 +48,7 @@ class CustomerController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|confirmed|min:8',
-            'phone' => 'required|string|max:20',
+            'phone' => 'required|string|max:20|unique:users',
             'address' => 'required|string|max:255',
 
         ]);
@@ -48,7 +63,7 @@ class CustomerController extends Controller
             'role' => 'customer',
         ]);
 
-         // Assign Spatie role
+        // Assign Spatie role
         $user->assignRole('customer');
 
         // notify all admins
@@ -76,7 +91,7 @@ class CustomerController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
-            'phone' => 'required|string|max:20',
+            'phone' => 'required|string|max:20|unique:users,phone,' . $user->id,
             'address' => 'required|string|max:255',
             'active' => 'required|boolean',
             'password' => 'nullable|min:8',

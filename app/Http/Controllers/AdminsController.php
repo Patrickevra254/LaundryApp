@@ -112,7 +112,7 @@ class AdminsController extends Controller
             'name'      => 'required|string|max:255',
             'email'     => 'required|email|unique:users',
             'password'  => 'required|confirmed|min:8',
-            'phone'     => 'required|string|max:20',
+            'phone'     => 'required|string|max:20|unique:users',
             'address'   => 'required|string|max:255',
             'branch_id' => 'required|exists:branches,id',
         ]);
@@ -149,7 +149,7 @@ class AdminsController extends Controller
         $request->validate([
             'name'      => 'required|string|max:255',
             'email'     => 'required|email|unique:users,email,' . $user->id,
-            'phone'     => 'required|string|max:20',
+            'phone'     => 'required|string|max:20|unique:users,phone,' . $user->id,
             'address'   => 'required|string|max:255',
             'active'    => 'required|boolean',
             'password'  => 'nullable|min:8',

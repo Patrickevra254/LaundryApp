@@ -313,8 +313,8 @@
     <div id="toastStack"
         style="
         position: fixed;
-        top: 1.25rem;
-        left: 50%;
+        top: 5rem;
+        left: 85%;
         transform: translateX(-50%);
         z-index: 99999;
         display: flex;
@@ -540,7 +540,7 @@
                     <i class="fa fa-xmark"></i>
                 </button>`;
             stack.appendChild(toast);
-            setTimeout(() => dismissToast(toast), 5000);
+            setTimeout(() => dismissToast(toast), 8000);
         }
 
         function dismissToast(toast) {
@@ -681,7 +681,7 @@
         });
     </script>
 
-</body>
+    </bo dy>
 
 </html>
 

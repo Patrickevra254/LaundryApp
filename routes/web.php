@@ -109,7 +109,9 @@ Route::middleware(['auth', 'role:staff|admin|superAdmin'])->group(function () {
 
     // View customer and staff lists (filtered by branch in controller)
     Route::get('/customer', [UserController::class, 'customerIndex'])->name('customer');
+    Route::get('/customer/{user}',    [CustomerController::class, 'show'])->name('customer.show');
     Route::get('/staff',    [UserController::class, 'staffIndex'])->name('staff');
+    Route::get('/staff/{user}',    [StaffController::class, 'show'])->name('staff.show');
 });
 
 
@@ -128,13 +130,13 @@ Route::middleware(['auth', 'role:admin|superAdmin'])->group(function () {
     Route::delete('/admin/{user}', [AdminsController::class, 'destroy'])->name('admin.destroy');
 
     // Staff CRUD
-    Route::get('/staff/{user}',    [StaffController::class, 'show'])->name('staff.show');
+    // Route::get('/staff/{user}',    [StaffController::class, 'show'])->name('staff.show');
     Route::post('/staff',          [StaffController::class, 'storeStaff'])->name('staff.store');
     Route::put('/staff/{user}',    [StaffController::class, 'update'])->name('staff.update');
     Route::delete('/staff/{user}', [StaffController::class, 'destroy'])->name('staff.destroy');
 
     // Customer CRUD
-    Route::get('/customer/{user}',    [CustomerController::class, 'show'])->name('customer.show');
+    // Route::get('/customer/{user}',    [CustomerController::class, 'show'])->name('customer.show');
     Route::post('/customer',          [CustomerController::class, 'storeCustomer'])->name('customer.store');
     Route::put('/customer/{user}',    [CustomerController::class, 'update'])->name('customer.update');
     Route::delete('/customer/{user}', [CustomerController::class, 'destroy'])->name('customer.destroy');
