@@ -1275,8 +1275,8 @@
         hx-trigger="keyup changed delay:400ms" class="h-filter mb-3">
         <div class="h-search-wrap">
             <i class="fa fa-search"></i>
-            <input type="text" name="q" class="h-search" placeholder="Search by customer or status..."
-                value="{{ request('q') }}">
+            <input type="text" name="q" class="h-search"
+                placeholder="Search by customer name, branch or status..." value="{{ request('q') }}">
         </div>
         <a href="{{ route('orderTrack') }}" class="n-btn n-btn-secondary text-decoration-none"
             hx-get="{{ route('orderTrack') }}" hx-target="#content-area" hx-push-url="true"
