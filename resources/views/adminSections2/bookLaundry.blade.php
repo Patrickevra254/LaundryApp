@@ -3456,7 +3456,7 @@
 
         let debounceTimer;
 
-        function selectCustomer(id, name, phone, email) {
+        function selectCustomer(id, name, phone, email, address) {
             // Populate hidden fields
             document.getElementById('field_customer_id').value = id;
             document.getElementById('field_customer_email').value = email || '';
@@ -3473,6 +3473,14 @@
 
             const metaEl = document.getElementById('custSelectedMeta');
             if (metaEl) metaEl.textContent = phone ? `📞 ${phone}` : 'No phone on record';
+
+            // Autofill pickup/delivery addresses from the customer's saved address — still editable
+            const pickupField = document.getElementById('field_pickup_address');
+            const deliveryField = document.getElementById('field_delivery_address');
+            if (address) {
+                if (pickupField) pickupField.value = address;
+                if (deliveryField) deliveryField.value = address;
+            }
 
             // Update input to show selected name
             input.value = name;
@@ -3516,7 +3524,8 @@
             }
             dropdown.innerHTML = customers.map(c => `
                 <div class="cust-item" data-id="${c.id}" data-name="${c.name}"
-                    data-phone="${c.phone || ''}" data-email="${c.email || ''}">
+                    data-phone="${c.phone || ''}" data-email="${c.email || ''}"
+                    data-address="${encodeURIComponent(c.address || '')}">
                     <div class="cust-item-avatar">${c.name.charAt(0).toUpperCase()}</div>
                     <div>
                         <div class="cust-item-name">${c.name}</div>
@@ -3532,7 +3541,8 @@
                         this.dataset.id,
                         this.dataset.name,
                         this.dataset.phone,
-                        this.dataset.email
+                        this.dataset.email,
+                        decodeURIComponent(this.dataset.address || '')
                     );
                 });
             });

@@ -37,7 +37,7 @@ class CustomerController extends Controller
                 }
             })
             ->limit(8)
-            ->get(['id', 'name', 'phone', 'email']);
+            ->get(['id', 'name', 'phone', 'email', 'address']);
 
         return response()->json($customers);
     }

@@ -305,6 +305,16 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        .htmx-indicator {
+            display: none;
+            position: fixed !important;
+            top: 50% !important;
+            left: 55% !important;
+            transform: translate(-50%, -50%) !important;
+        }
+    </style>
 </head>
 
 <body class="" id="body">
@@ -681,16 +691,6 @@
         });
     </script>
 
-    </bo dy>
+    </body>
 
 </html>
-
-<style>
-    .htmx-indicator {
-        display: none;
-        position: fixed !important;
-        top: 50% !important;
-        left: 55% !important;
-        transform: translate(-50%, -50%) !important;
-    }
-</style>
