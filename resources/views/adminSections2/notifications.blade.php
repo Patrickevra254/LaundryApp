@@ -492,15 +492,19 @@
                             </button>
                         </form>
                     @endif
-                    <form method="POST" action="{{ route('notifications.destroy', $notification->id) }}"
-                        class="swal-delete-form" data-name="{{ $notification->data['title'] ?? 'this notification' }}"
-                        data-type="single" data-title="Delete Notification?"
-                        data-message="This notification will be permanently removed.">
-                        @csrf @method('DELETE')
-                        <button type="submit" class="n-icon-btn" title="Delete">
-                            <i class="fa fa-trash text-danger"></i>
-                        </button>
-                    </form>
+
+                    @if (auth()->user()->hasAnyRole(['superAdmin']))
+                        <form method="POST" action="{{ route('notifications.destroy', $notification->id) }}"
+                            class="swal-delete-form"
+                            data-name="{{ $notification->data['title'] ?? 'this notification' }}" data-type="single"
+                            data-title="Delete Notification?"
+                            data-message="This notification will be permanently removed.">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="n-icon-btn" title="Delete">
+                                <i class="fa fa-trash text-danger"></i>
+                            </button>
+                        </form>
+                    @endif
                 </div>
             </div>
         @empty
